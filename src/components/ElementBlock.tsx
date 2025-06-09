@@ -1,7 +1,10 @@
 
-import React from "react";
+
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { CodeDataElement } from "@/types/codeData";
 
 interface ElementBlockProps {
@@ -29,6 +32,7 @@ interface MockContentGeneral {
 type MockContent = MockContentModifiers | MockContentGeneral;
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
+  const [showAllModifiers, setShowAllModifiers] = useState(false);
   const scrollId = element.ElementName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
 
   // Mock data for different element types
@@ -258,6 +262,8 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
 
   const renderContent = () => {
     if (content.type === "modifiers") {
+      const modifiersToShow = showAllModifiers ? content.data : content.data.slice(0, 3);
+      
       return (
         <div className="space-y-6">
           <div className="bg-purple-100 border border-purple-200 rounded-lg p-4">
@@ -268,13 +274,33 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
               </h4>
               <Badge variant="outline" className="text-xs">auto-open</Badge>
             </div>
-            <p className="text-sm text-purple-700 mb-4">
-              Top modifiers billed to Medicare are shown. <span className="text-blue-600 cursor-pointer hover:underline">view all modifiers</span>
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-purple-700">
+                Top modifiers billed to Medicare are shown.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAllModifiers(!showAllModifiers)}
+                className="ml-4 text-xs h-8 px-3"
+              >
+                {showAllModifiers ? (
+                  <>
+                    <ChevronUp className="h-3 w-3 mr-1" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-3 w-3 mr-1" />
+                    View All ({content.data.length})
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
           
           <div className="space-y-4">
-            {content.data.map((item, index) => (
+            {modifiersToShow.map((item, index) => (
               <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
                 <div className="flex items-start gap-3 mb-2">
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 font-mono text-sm px-2 py-1">
@@ -320,3 +346,4 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
     </div>
   );
 };
+
