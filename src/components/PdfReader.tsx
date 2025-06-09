@@ -1,21 +1,12 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import { Upload, FileText, X, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-
-// Configure PDF.js worker for Vite
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
-
-interface PdfReaderProps {
-  onTextExtracted?: (text: string, filename: string) => void;
-}
+import { PdfReaderProps } from '@/types/pdf';
+import { configurePdfWorker } from '@/utils/pdfConfig';
+import { FileUpload } from '@/components/pdf/FileUpload';
+import { PdfViewer } from '@/components/pdf/PdfViewer';
+import { ExtractedText } from '@/components/pdf/ExtractedText';
+import { usePdfExtraction } from '@/hooks/usePdfExtraction';
 
 export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [file, setFile] = useState<File | null>(null);
@@ -28,8 +19,10 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [extractProgress, setExtractProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  const { extractTextFromPdf } = usePdfExtraction();
+
   useEffect(() => {
-    console.log('PDF.js worker configured for Vite:', pdfjs.GlobalWorkerOptions.workerSrc);
+    configurePdfWorker();
   }, []);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +58,23 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     setLoadProgress(100);
     
     // Start text extraction automatically
-    extractTextFromPdf();
-  }, []);
+    if (file) {
+      setIsExtracting(true);
+      extractTextFromPdf(
+        file,
+        setExtractProgress,
+        (text: string) => {
+          setExtractedText(text);
+          setIsExtracting(false);
+          onTextExtracted?.(text, file.name);
+        },
+        (errorMsg: string) => {
+          setError(errorMsg);
+          setIsExtracting(false);
+        }
+      );
+    }
+  }, [file, extractTextFromPdf, onTextExtracted]);
 
   const onDocumentLoadError = useCallback((error: Error) => {
     console.error('PDF load error:', error);
@@ -74,48 +82,6 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     setIsLoading(false);
     setLoadProgress(0);
   }, []);
-
-  const extractTextFromPdf = useCallback(async () => {
-    if (!file) return;
-
-    console.log('Starting text extraction from:', file.name);
-    setIsExtracting(true);
-    setExtractProgress(0);
-    setError(null);
-    
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      console.log('File converted to array buffer');
-      
-      const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
-      console.log('PDF document loaded for extraction, pages:', pdf.numPages);
-      
-      let fullText = '';
-      
-      for (let i = 1; i <= pdf.numPages; i++) {
-        console.log('Extracting text from page', i);
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items
-          .map((item: any) => item.str)
-          .join(' ');
-        fullText += `\n\n--- Page ${i} ---\n\n${pageText}`;
-        
-        const progress = Math.round((i / pdf.numPages) * 100);
-        setExtractProgress(progress);
-      }
-      
-      console.log('Text extraction completed, length:', fullText.length);
-      setExtractedText(fullText);
-      onTextExtracted?.(fullText, file.name);
-    } catch (error) {
-      console.error('Text extraction error:', error);
-      setError(`Failed to extract text: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
-      setIsExtracting(false);
-    }
-  }, [file, onTextExtracted]);
 
   const clearFile = useCallback(() => {
     setFile(null);
@@ -150,75 +116,15 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
 
   return (
     <div className="space-y-6">
-      {/* File Upload */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="h-5 w-5" />
-            <span>PDF Reader</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!file ? (
-            <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-              <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Upload PDF File</h3>
-              <p className="text-muted-foreground mb-4">
-                Select a PDF file to view and extract text content automatically
-              </p>
-              <input
-                type="file"
-                accept=".pdf,application/pdf"
-                onChange={onFileChange}
-                className="hidden"
-                id="pdf-upload"
-              />
-              <label htmlFor="pdf-upload">
-                <Button variant="outline" className="cursor-pointer" asChild>
-                  <span>Choose PDF File</span>
-                </Button>
-              </label>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4" />
-                  <span className="font-medium truncate">{file.name}</span>
-                  <Badge variant="outline">{(file.size / 1024 / 1024).toFixed(2)} MB</Badge>
-                </div>
-                <Button onClick={clearFile} variant="outline" size="sm">
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              {(isLoading || isExtracting) && (
-                <div className="space-y-3">
-                  {isLoading && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Loading PDF</span>
-                        <span>{loadProgress}%</span>
-                      </div>
-                      <Progress value={loadProgress} className="h-2" />
-                    </div>
-                  )}
-                  
-                  {isExtracting && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Extracting Text</span>
-                        <span>{extractProgress}%</span>
-                      </div>
-                      <Progress value={extractProgress} className="h-2" />
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <FileUpload
+        file={file}
+        isLoading={isLoading}
+        isExtracting={isExtracting}
+        loadProgress={loadProgress}
+        extractProgress={extractProgress}
+        onFileChange={onFileChange}
+        onClearFile={clearFile}
+      />
 
       {error && (
         <Alert variant="destructive">
@@ -226,95 +132,23 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
         </Alert>
       )}
 
-      {/* PDF Viewer */}
       {file && !error && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>PDF Preview</CardTitle>
-              {numPages && (
-                <div className="flex items-center space-x-2">
-                  <Button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage <= 1}
-                    size="sm"
-                    variant="outline"
-                  >
-                    Previous
-                  </Button>
-                  <span className="text-sm">
-                    Page {currentPage} of {numPages}
-                  </span>
-                  <Button
-                    onClick={() => setCurrentPage(Math.min(numPages, currentPage + 1))}
-                    disabled={currentPage >= numPages}
-                    size="sm"
-                    variant="outline"
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="border rounded-lg overflow-auto max-h-96 bg-gray-50">
-              <Document
-                file={file}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={onDocumentLoadError}
-                loading={
-                  <div className="p-8 text-center">
-                    <div className="text-sm text-muted-foreground">Loading PDF...</div>
-                  </div>
-                }
-                error={
-                  <div className="p-8 text-center text-red-600">
-                    <div>Failed to load PDF</div>
-                  </div>
-                }
-              >
-                {numPages && (
-                  <Page
-                    pageNumber={currentPage}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                    className="mx-auto"
-                    width={Math.min(600, window.innerWidth - 100)}
-                  />
-                )}
-              </Document>
-            </div>
-          </CardContent>
-        </Card>
+        <PdfViewer
+          file={file}
+          numPages={numPages}
+          currentPage={currentPage}
+          error={error}
+          onDocumentLoadSuccess={onDocumentLoadSuccess}
+          onDocumentLoadError={onDocumentLoadError}
+          onPageChange={setCurrentPage}
+        />
       )}
 
-      {/* Extracted Text */}
-      {extractedText && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Extracted Text</CardTitle>
-              <Button onClick={downloadExtractedText} size="sm" variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Download Text
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-muted/50 rounded-lg p-4 max-h-64 overflow-auto">
-              <pre className="whitespace-pre-wrap text-sm font-mono">
-                {extractedText}
-              </pre>
-            </div>
-            <div className="mt-2">
-              <Badge variant="outline">
-                {(extractedText.length / 1000).toFixed(1)}k characters extracted
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <ExtractedText
+        extractedText={extractedText}
+        filename={file?.name || null}
+        onDownload={downloadExtractedText}
+      />
     </div>
   );
 };
