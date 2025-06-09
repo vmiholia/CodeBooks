@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,9 +17,20 @@ interface ModifierData {
   description: string;
 }
 
+interface HistoryData {
+  date: string;
+  action: string;
+  notes: string;
+}
+
 interface MockContentModifiers {
   type: "modifiers";
   data: ModifierData[];
+}
+
+interface MockContentHistory {
+  type: "history";
+  data: HistoryData[];
 }
 
 interface MockContentGeneral {
@@ -29,7 +38,7 @@ interface MockContentGeneral {
   data: string;
 }
 
-type MockContent = MockContentModifiers | MockContentGeneral;
+type MockContent = MockContentModifiers | MockContentHistory | MockContentGeneral;
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   const [showAllModifiers, setShowAllModifiers] = useState(false);
@@ -135,6 +144,23 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           ]
         };
 
+      case "Code History & Valuation":
+        return {
+          type: "history",
+          data: [
+            {
+              date: "2011-01-01",
+              action: "Changed",
+              notes: "Short description changed."
+            },
+            {
+              date: "Pre-1990",
+              action: "Added",
+              notes: "Code added."
+            }
+          ]
+        };
+
       case "Official CPT Descriptor":
         return {
           type: "content",
@@ -235,11 +261,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           type: "content",
           data: "These are American Hospital Association Coding Clinic references."
         };
-      case "Code History & Valuation":
-        return {
-          type: "content",
-          data: "These are historical changes and valuation updates."
-        };
       case "Visual Icons / Alerts":
         return {
           type: "content",
@@ -323,6 +344,43 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
       );
     }
 
+    if (content.type === "history") {
+      return (
+        <div className="space-y-4">
+          <div className="bg-purple-100 border border-purple-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-semibold text-purple-900 flex items-center gap-2">
+                <span className="text-sm">📜</span>
+                Code History
+              </h4>
+              <Badge variant="outline" className="text-xs">auto-open</Badge>
+            </div>
+          </div>
+          
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader className="bg-gray-50">
+                <TableRow>
+                  <TableHead className="font-semibold text-gray-700">date</TableHead>
+                  <TableHead className="font-semibold text-gray-700">action</TableHead>
+                  <TableHead className="font-semibold text-gray-700">notes</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {content.data.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{item.date}</TableCell>
+                    <TableCell>{item.action}</TableCell>
+                    <TableCell>{item.notes}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="prose prose-sm max-w-none">
         <p className="text-gray-700">{content.data}</p>
@@ -346,4 +404,3 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
     </div>
   );
 };
-
