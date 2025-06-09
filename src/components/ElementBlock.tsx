@@ -100,12 +100,103 @@ interface MockContentMedicareFees {
   };
 }
 
+interface MockContentRVUBreakdown {
+  type: "rvu-breakdown";
+  data: {
+    title: string;
+    note: string;
+    sections: {
+      name: string;
+      total: string;
+      type: "collapsible";
+      content?: {
+        rvuComponents?: {
+          title: string;
+          table: {
+            modifier: string;
+            work: string;
+            practiceExpense: string;
+            malpracticeExpense: string;
+            total: string;
+          }[];
+          note?: string;
+        };
+        practitionerWork?: {
+          title: string;
+          laborSection: {
+            title: string;
+            table: {
+              preService: string;
+              intraService: string;
+              postService: string;
+              totalTime: string;
+            };
+            note: string;
+          };
+          workRVUComponents: {
+            title: string;
+            table: {
+              modifier: string;
+              nationalUnadjustedWorkRVU: string;
+              workGPCI: string;
+              adjustedWorkRVU: string;
+            }[];
+          };
+        };
+        practiceExpense?: {
+          title: string;
+          clinicalLabor: {
+            title: string;
+            table: {
+              staff: string;
+              staffRate: string;
+              preTime: string;
+              intraTime: string;
+              postTime: string;
+              totalTime: string;
+            }[];
+          };
+          equipment: {
+            title: string;
+            table: {
+              item: string;
+              purchasePrice: string;
+              expectedLife: string;
+              totalTime: string;
+            }[];
+          };
+          supplies: {
+            title: string;
+            table: {
+              item: string;
+              unitPrice: string;
+              quantity: string;
+              unit: string;
+              amount: string;
+            }[];
+          };
+          indirectNote: string;
+          peRVUComponents: {
+            title: string;
+            table: {
+              modifier: string;
+              nationalUnadjustedPERVU: string;
+              peGPCI: string;
+              adjustedPERVU: string;
+            }[];
+          };
+        };
+      };
+    }[];
+  };
+}
+
 interface MockContentGeneral {
   type: "content";
   data: string;
 }
 
-type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentMedicareFees | MockContentGeneral;
+type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentMedicareFees | MockContentRVUBreakdown | MockContentGeneral;
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   const [showAllModifiers, setShowAllModifiers] = useState(false);
@@ -223,6 +314,31 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
         return {
           type: "history",
           data: [
+            {
+              date: "2024-01-01",
+              action: "RVU Change",
+              notes: "Work RVU: 13.27 → 13.28 (+0.01), Non-Facility PE: 7.04 → 7.05 (+0.01), Facility PE: 1.50 → 1.51 (+0.01)"
+            },
+            {
+              date: "2023-01-01", 
+              action: "RVU Change",
+              notes: "Work RVU: 13.25 → 13.27 (+0.02), Non-Facility PE: 7.02 → 7.04 (+0.02)"
+            },
+            {
+              date: "2022-01-01",
+              action: "RVU Change", 
+              notes: "Work RVU: 13.23 → 13.25 (+0.02), Facility PE: 1.48 → 1.50 (+0.02)"
+            },
+            {
+              date: "2021-01-01",
+              action: "RVU Change",
+              notes: "Work RVU: 13.20 → 13.23 (+0.03), Non-Facility PE: 6.98 → 7.02 (+0.04)"
+            },
+            {
+              date: "2020-01-01",
+              action: "Code Review",
+              notes: "Comprehensive review of procedure components and relative values"
+            },
             {
               date: "2011-01-01",
               action: "Changed",
@@ -358,6 +474,176 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           }
         };
 
+      case "RVU Breakdown":
+        return {
+          type: "rvu-breakdown",
+          data: {
+            title: "Calculated for DE (19801) - Novitas Solutions, Inc.",
+            note: "* Note: Medicare may or may NOT reimburse you for this code. The fees provided below are based on values established by CMS/Medicare. Please check with your local Medicare contact on whether this code is eligible for reimbursement.",
+            sections: [
+              {
+                name: "Facility 21.840 (Hospital, etc.)",
+                total: "21.840",
+                type: "collapsible",
+                content: {
+                  rvuComponents: {
+                    title: "RVU Components (by modifier)",
+                    table: [
+                      {
+                        modifier: "(none)",
+                        work: "13.278",
+                        practiceExpense: "7.053",
+                        malpracticeExpense: "1.509",
+                        total: "21.840"
+                      },
+                      {
+                        modifier: "(MPPR)",
+                        work: "6.639",
+                        practiceExpense: "3.532",
+                        malpracticeExpense: "0.759",
+                        total: "10.930"
+                      }
+                    ],
+                    note: "Calculated fee values are available.\n\nAccess to this feature is available in the following products:\n• Find-A-Code Facility Base/Plus/Complete"
+                  },
+                  practitionerWork: {
+                    title: "Practitioner Work Component: 13.278",
+                    laborSection: {
+                      title: "Practitioner Labor",
+                      table: {
+                        preService: "##",
+                        intraService: "##", 
+                        postService: "##",
+                        totalTime: "## min"
+                      },
+                      note: "* Total Time may be greater than the displayed components."
+                    },
+                    workRVUComponents: {
+                      title: "Work RVU Components (by modifier)",
+                      table: [
+                        {
+                          modifier: "(none)",
+                          nationalUnadjustedWorkRVU: "##.##",
+                          workGPCI: "##.##",
+                          adjustedWorkRVU: "13.278"
+                        },
+                        {
+                          modifier: "(MPPR)",
+                          nationalUnadjustedWorkRVU: "##.##",
+                          workGPCI: "##.##",
+                          adjustedWorkRVU: "6.639"
+                        }
+                      ]
+                    }
+                  },
+                  practiceExpense: {
+                    title: "Practice Expense: 7.053",
+                    clinicalLabor: {
+                      title: "Clinical Labor - Direct Expense",
+                      table: [
+                        {
+                          staff: "RN/LPN/MTA",
+                          staffRate: "$0.54 / min",
+                          preTime: "## min",
+                          intraTime: "## min",
+                          postTime: "## min",
+                          totalTime: "## min"
+                        }
+                      ]
+                    },
+                    equipment: {
+                      title: "Equipment - Direct Expense",
+                      table: [
+                        {
+                          item: "table, power",
+                          purchasePrice: "$##.##",
+                          expectedLife: "## years",
+                          totalTime: "## min"
+                        }
+                      ]
+                    },
+                    supplies: {
+                      title: "Supplies - Direct Expense",
+                      table: [
+                        {
+                          item: "pack, minimum multi-specialty visit",
+                          unitPrice: "$##.##",
+                          quantity: "##",
+                          unit: "pack",
+                          amount: "$##.##"
+                        },
+                        {
+                          item: "underpad 2ft x 3ft (Chux)",
+                          unitPrice: "$##.##",
+                          quantity: "##",
+                          unit: "item",
+                          amount: "$##.##"
+                        },
+                        {
+                          item: "syringe 10-12ml",
+                          unitPrice: "$##.##",
+                          quantity: "##",
+                          unit: "item",
+                          amount: "$##.##"
+                        },
+                        {
+                          item: "syringe 50-60ml",
+                          unitPrice: "$##.##",
+                          quantity: "##",
+                          unit: "item",
+                          amount: "$##.##"
+                        },
+                        {
+                          item: "sodium chloride 0.9% irrigation (500-1000ml uou)",
+                          unitPrice: "$##.##",
+                          quantity: "##",
+                          unit: "item",
+                          amount: "$##.##"
+                        },
+                        {
+                          item: "cup-container, sterile, graduated 1000ml",
+                          unitPrice: "$##.##",
+                          quantity: "##",
+                          unit: "item",
+                          amount: "$##.##"
+                        }
+                      ]
+                    },
+                    indirectNote: "Indirect Expenses (clerical,overhead, and other) are also included in the practice expense.",
+                    peRVUComponents: {
+                      title: "PE RVU Components (by modifier)",
+                      table: [
+                        {
+                          modifier: "(none)",
+                          nationalUnadjustedPERVU: "##.##",
+                          peGPCI: "##.##",
+                          adjustedPERVU: "7.053"
+                        },
+                        {
+                          modifier: "(MPPR)",
+                          nationalUnadjustedPERVU: "##.##",
+                          peGPCI: "##.##",
+                          adjustedPERVU: "3.532"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                name: "Non-Facility 21.840 (Office, etc.)",
+                total: "21.840",
+                type: "collapsible"
+              },
+              {
+                name: "UCR-Based RVUs",
+                total: "",
+                type: "collapsible"
+              }
+            ]
+          }
+        };
+
       case "Official CPT Descriptor":
         return {
           type: "content",
@@ -397,11 +683,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
         return {
           type: "content",
           data: "This is the maximum units that can be billed per date of service."
-        };
-      case "RVU Breakdown":
-        return {
-          type: "content",
-          data: "This is the work, practice expense, and malpractice RVU components."
         };
       case "ASC Payment Indicator":
         return {
@@ -480,7 +761,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                 <span className="text-sm">📊</span>
                 Top Modifiers - Most Often Billed
               </h4>
-              <Badge variant="outline" className="text-xs">auto-open</Badge>
             </div>
             <div className="flex items-center justify-between">
               <p className="text-sm text-purple-700">
@@ -668,7 +948,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
 
                       {/* Medicare Participating */}
                       <div>
-                        <h5 className="font-semibold text-gray-900 mb-4">{section.content.participatingSection.title}</h5>
+                        <h5 className="font-semibold text-gray-900 mb-4">{section.content.participatingSection?.title}</h5>
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm border-collapse">
                             <thead>
@@ -680,7 +960,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                               </tr>
                             </thead>
                             <tbody>
-                              {section.content.participatingSection.table.map((row, rowIndex) => (
+                              {section.content.participatingSection?.table.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
                                   <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
                                   <td className="border border-gray-200 px-3 py-2">{row.allowed}</td>
@@ -696,7 +976,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                       {/* Medicare Non-Participating - Assignment Accepted */}
                       <div>
                         <h5 className="font-semibold text-gray-900 mb-4">
-                          {section.content.nonParticipatingAccepted.title}
+                          {section.content.nonParticipatingAccepted?.title}
                         </h5>
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm border-collapse">
@@ -710,7 +990,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                               </tr>
                             </thead>
                             <tbody>
-                              {section.content.nonParticipatingAccepted.table.map((row, rowIndex) => (
+                              {section.content.nonParticipatingAccepted?.table.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
                                   <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
                                   <td className="border border-gray-200 px-3 py-2">{row.allowed}</td>
@@ -727,7 +1007,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                       {/* Medicare Non-Participating - Assignment NOT Accepted */}
                       <div>
                         <h5 className="font-semibold text-gray-900 mb-4">
-                          {section.content.nonParticipatingNotAccepted.title}
+                          {section.content.nonParticipatingNotAccepted?.title}
                         </h5>
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm border-collapse">
@@ -741,7 +1021,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                               </tr>
                             </thead>
                             <tbody>
-                              {section.content.nonParticipatingNotAccepted.table.map((row, rowIndex) => (
+                              {section.content.nonParticipatingNotAccepted?.table.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
                                   <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
                                   <td className="border border-gray-200 px-3 py-2">{row.allowed}</td>
@@ -758,6 +1038,278 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                   )}
                   
                   {section.name !== "Facility (Hospital, etc.)" && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6">
+                      <p className="text-gray-600">Content for {section.name} section would appear here.</p>
+                    </div>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (content.type === "rvu-breakdown") {
+      return (
+        <div className="space-y-4">
+          <div className="mb-6">
+            <h4 className="font-semibold text-gray-900 mb-2">{content.data.title}</h4>
+            <p className="text-sm text-gray-600">{content.data.note}</p>
+          </div>
+
+          <div className="space-y-2">
+            {content.data.sections.map((section, index) => (
+              <Collapsible 
+                key={index} 
+                open={openSections[section.name]} 
+                onOpenChange={() => toggleSection(section.name)}
+              >
+                <CollapsibleTrigger asChild>
+                  <div className="bg-blue-600 text-white px-4 py-3 rounded-lg flex items-center justify-between cursor-pointer hover:bg-blue-700 transition-colors">
+                    <div className="flex items-center gap-2">
+                      {openSections[section.name] ? (
+                        <Minus className="h-4 w-4" />
+                      ) : (
+                        <Plus className="h-4 w-4" />
+                      )}
+                      <span className="font-medium">{section.name}</span>
+                    </div>
+                  </div>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent className="mt-2">
+                  {section.name === "Facility 21.840 (Hospital, etc.)" && section.content && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
+                      {/* RVU Components */}
+                      {section.content.rvuComponents && (
+                        <div>
+                          <h5 className="font-semibold text-gray-900 mb-4">{section.content.rvuComponents.title}</h5>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-sm border-collapse">
+                              <thead>
+                                <tr className="bg-gray-50">
+                                  <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                  <th className="border border-gray-200 px-3 py-2 text-left font-medium">work</th>
+                                  <th className="border border-gray-200 px-3 py-2 text-left font-medium">practice expense</th>
+                                  <th className="border border-gray-200 px-3 py-2 text-left font-medium">malpractice expense</th>
+                                  <th className="border border-gray-200 px-3 py-2 text-left font-medium">total</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {section.content.rvuComponents.table.map((row, rowIndex) => (
+                                  <tr key={rowIndex}>
+                                    <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                    <td className="border border-gray-200 px-3 py-2">{row.work}</td>
+                                    <td className="border border-gray-200 px-3 py-2">{row.practiceExpense}</td>
+                                    <td className="border border-gray-200 px-3 py-2">{row.malpracticeExpense}</td>
+                                    <td className="border border-gray-200 px-3 py-2 font-semibold">{row.total}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Access Feature Notice */}
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4">
+                            <p className="text-sm text-gray-700 mb-2">Calculated fee values are available.</p>
+                            <p className="text-sm text-gray-700 mb-3">Access to this feature is available in the following products:</p>
+                            <ul className="text-sm text-gray-700 mb-3 ml-4">
+                              <li>• Find-A-Code Facility Base/Plus/Complete</li>
+                            </ul>
+                            <Button variant="outline" size="sm" className="text-sm">
+                              subscribe
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Practitioner Work Component */}
+                      {section.content.practitionerWork && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <h5 className="font-semibold text-blue-900 mb-4">{section.content.practitionerWork.title}</h5>
+                          
+                          {/* Practitioner Labor */}
+                          <div className="mb-6">
+                            <h6 className="font-semibold text-gray-900 mb-3">{section.content.practitionerWork.laborSection.title}</h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm border-collapse">
+                                <thead>
+                                  <tr className="bg-gray-50">
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">pre-service</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">intra-service</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">post-service</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">total time*</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td className="border border-gray-200 px-3 py-2">{section.content.practitionerWork.laborSection.table.preService}</td>
+                                    <td className="border border-gray-200 px-3 py-2">{section.content.practitionerWork.laborSection.table.intraService}</td>
+                                    <td className="border border-gray-200 px-3 py-2">{section.content.practitionerWork.laborSection.table.postService}</td>
+                                    <td className="border border-gray-200 px-3 py-2">{section.content.practitionerWork.laborSection.table.totalTime}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <p className="text-xs text-gray-600 mt-2">{section.content.practitionerWork.laborSection.note}</p>
+                          </div>
+
+                          {/* Work RVU Components */}
+                          <div>
+                            <h6 className="font-semibold text-gray-900 mb-3">{section.content.practitionerWork.workRVUComponents.title}</h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm border-collapse">
+                                <thead>
+                                  <tr className="bg-gray-50">
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">national unadjusted work rvu</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">work gpci</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">adjusted work rvu</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {section.content.practitionerWork.workRVUComponents.table.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                      <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.nationalUnadjustedWorkRVU}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.workGPCI}</td>
+                                      <td className="border border-gray-200 px-3 py-2 font-semibold">{row.adjustedWorkRVU}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Practice Expense */}
+                      {section.content.practiceExpense && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <h5 className="font-semibold text-blue-900 mb-4">{section.content.practiceExpense.title}</h5>
+                          
+                          {/* Clinical Labor */}
+                          <div className="mb-6">
+                            <h6 className="font-semibold text-gray-900 mb-3">{section.content.practiceExpense.clinicalLabor.title}</h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm border-collapse">
+                                <thead>
+                                  <tr className="bg-gray-50">
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">staff</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">staff rate</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">pre time</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">intra time</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">post time</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">total time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {section.content.practiceExpense.clinicalLabor.table.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                      <td className="border border-gray-200 px-3 py-2">{row.staff}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.staffRate}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.preTime}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.intraTime}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.postTime}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.totalTime}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Equipment */}
+                          <div className="mb-6">
+                            <h6 className="font-semibold text-gray-900 mb-3">{section.content.practiceExpense.equipment.title}</h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm border-collapse">
+                                <thead>
+                                  <tr className="bg-gray-50">
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">item</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">purchase price</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">expected life</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">total time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {section.content.practiceExpense.equipment.table.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                      <td className="border border-gray-200 px-3 py-2">{row.item}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.purchasePrice}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.expectedLife}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.totalTime}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Supplies */}
+                          <div className="mb-6">
+                            <h6 className="font-semibold text-gray-900 mb-3">{section.content.practiceExpense.supplies.title}</h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm border-collapse">
+                                <thead>
+                                  <tr className="bg-gray-50">
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">item</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">unit price</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">quantity</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">unit</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">amount</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {section.content.practiceExpense.supplies.table.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                      <td className="border border-gray-200 px-3 py-2">{row.item}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.unitPrice}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.quantity}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.unit}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.amount}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          <p className="text-sm text-gray-700 mb-4">{section.content.practiceExpense.indirectNote}</p>
+
+                          {/* PE RVU Components */}
+                          <div>
+                            <h6 className="font-semibold text-gray-900 mb-3">{section.content.practiceExpense.peRVUComponents.title}</h6>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm border-collapse">
+                                <thead>
+                                  <tr className="bg-gray-50">
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">national unadjusted pe rvu</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">pe gpci</th>
+                                    <th className="border border-gray-200 px-3 py-2 text-left font-medium">adjusted pe rvu</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {section.content.practiceExpense.peRVUComponents.table.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                      <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.nationalUnadjustedPERVU}</td>
+                                      <td className="border border-gray-200 px-3 py-2">{row.peGPCI}</td>
+                                      <td className="border border-gray-200 px-3 py-2 font-semibold">{row.adjustedPERVU}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {section.name !== "Facility 21.840 (Hospital, etc.)" && (
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                       <p className="text-gray-600">Content for {section.name} section would appear here.</p>
                     </div>
