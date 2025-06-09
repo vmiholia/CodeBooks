@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Upload, FileText, X, Download } from 'lucide-react';
@@ -38,14 +37,16 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     console.log('Selected file:', selectedFile.name, selectedFile.type, selectedFile.size);
     
     if (selectedFile.type === 'application/pdf') {
+      console.log('Setting file and initializing states...');
       setFile(selectedFile);
       setError(null);
       setExtractedText('');
       setCurrentPage(1);
+      setNumPages(null);
       setIsLoading(true);
-      setLoadProgress(0);
+      setLoadProgress(10); // Start with some progress to show activity
       setExtractProgress(0);
-      console.log('PDF file set successfully');
+      console.log('PDF file set successfully, loading should start now');
     } else {
       console.log('Invalid file type:', selectedFile.type);
       setError(`Please select a valid PDF file. Selected file type: ${selectedFile.type}`);
@@ -53,21 +54,32 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   }, []);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
-    console.log('PDF loaded successfully with', numPages, 'pages');
+    console.log('onDocumentLoadSuccess called with', numPages, 'pages');
     setNumPages(numPages);
     setIsLoading(false);
     setLoadProgress(100);
+    console.log('PDF loaded successfully, starting text extraction...');
+    
     // Auto-extract text when PDF loads successfully
     setTimeout(() => {
+      console.log('About to call extractTextFromPdf');
       extractTextFromPdf();
     }, 100);
   }, []);
 
   const onDocumentLoadError = useCallback((error: Error) => {
-    console.error('PDF load error:', error);
+    console.error('onDocumentLoadError called:', error);
     setError(`Failed to load PDF: ${error.message}`);
     setIsLoading(false);
     setLoadProgress(0);
+  }, []);
+
+  const onDocumentLoadProgress = useCallback(({ loaded, total }: { loaded: number; total: number }) => {
+    if (total > 0) {
+      const progress = Math.min(Math.round((loaded / total) * 90), 90); // Cap at 90% until fully loaded
+      console.log('PDF loading progress:', progress, '%', loaded, '/', total);
+      setLoadProgress(progress);
+    }
   }, []);
 
   const extractTextFromPdf = useCallback(async () => {
@@ -86,7 +98,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       console.log('File read as array buffer, size:', arrayBuffer.byteLength);
       
       const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-      console.log('PDF document loaded, pages:', pdf.numPages);
+      console.log('PDF document loaded for text extraction, pages:', pdf.numPages);
       
       let fullText = '';
       
@@ -263,14 +275,26 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
           <CardContent>
             <div className="border rounded-lg overflow-auto max-h-96 bg-gray-50">
               {isLoading ? (
-                <div className="p-8 text-center">Loading PDF...</div>
+                <div className="p-8 text-center">
+                  <div className="text-sm text-muted-foreground">Loading PDF... {loadProgress}%</div>
+                </div>
               ) : (
                 <Document
                   file={file}
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadError={onDocumentLoadError}
-                  loading={<div className="p-8 text-center">Loading PDF...</div>}
-                  error={<div className="p-8 text-center text-red-600">Failed to load PDF</div>}
+                  onLoadProgress={onDocumentLoadProgress}
+                  loading={
+                    <div className="p-8 text-center">
+                      <div className="text-sm text-muted-foreground">Loading PDF document...</div>
+                    </div>
+                  }
+                  error={
+                    <div className="p-8 text-center text-red-600">
+                      <div>Failed to load PDF</div>
+                      <div className="text-sm mt-2">Check console for details</div>
+                    </div>
+                  }
                 >
                   <Page
                     pageNumber={currentPage}
@@ -278,6 +302,8 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
                     renderAnnotationLayer={false}
                     className="mx-auto"
                     width={Math.min(600, window.innerWidth - 100)}
+                    onLoadSuccess={() => console.log(`Page ${currentPage} rendered successfully`)}
+                    onLoadError={(error) => console.error(`Page ${currentPage} load error:`, error)}
                   />
                 </Document>
               )}
