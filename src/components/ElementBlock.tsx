@@ -3,7 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp, Info, Plus, Minus } from "lucide-react";
 import { CodeDataElement } from "@/types/codeData";
 
 interface ElementBlockProps {
@@ -48,16 +49,75 @@ interface MockContentGlobalPeriod {
   data: GlobalPeriodData;
 }
 
+interface MockContentMedicareFees {
+  type: "medicare-fees";
+  data: {
+    title: string;
+    note: string;
+    sections: {
+      name: string;
+      type: "collapsible";
+      content?: {
+        title: string;
+        table: {
+          modifier: string;
+          medicareAllowed: string;
+          percentage150: string;
+          percentage200: string;
+          myFee: string;
+        }[];
+        participatingSection?: {
+          title: string;
+          table: {
+            modifier: string;
+            allowed: string;
+            medicare80: string;
+            patientPays: string;
+          }[];
+        };
+        nonParticipatingAccepted?: {
+          title: string;
+          table: {
+            modifier: string;
+            allowed: string;
+            medicare80: string;
+            patientPays: string;
+            limitingCharge: string;
+          }[];
+        };
+        nonParticipatingNotAccepted?: {
+          title: string;
+          table: {
+            modifier: string;
+            allowed: string;
+            medicare80: string;
+            patientPays: string;
+            limitingCharge: string;
+          }[];
+        };
+      };
+    }[];
+  };
+}
+
 interface MockContentGeneral {
   type: "content";
   data: string;
 }
 
-type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentGeneral;
+type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentMedicareFees | MockContentGeneral;
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   const [showAllModifiers, setShowAllModifiers] = useState(false);
+  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const scrollId = element.ElementName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+
+  const toggleSection = (sectionName: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  };
 
   // Mock data for different element types
   const getMockContent = (elementName: string): MockContent => {
@@ -189,6 +249,115 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           }
         };
 
+      case "Medicare Allowable Fee (POS)":
+        return {
+          type: "medicare-fees",
+          data: {
+            title: "Calculated for DE (19801) - Novitas Solutions, Inc.",
+            note: "* Note: Medicare may or may NOT reimburse you for this code. The fees provided below are based on values established by CMS/Medicare. Please check with your local Medicare contact on whether this code is eligible for reimbursement.",
+            sections: [
+              {
+                name: "Fees",
+                type: "collapsible"
+              },
+              {
+                name: "Facility (Hospital, etc.)",
+                type: "collapsible",
+                content: {
+                  title: "Medicare vs. My Fee Evaluation",
+                  table: [
+                    {
+                      modifier: "(none)",
+                      medicareAllowed: "$706.46",
+                      percentage150: "$1,059.69",
+                      percentage200: "$1,412.93",
+                      myFee: "(enter)"
+                    },
+                    {
+                      modifier: "(MPPR)",
+                      medicareAllowed: "$353.55",
+                      percentage150: "$530.32",
+                      percentage200: "$707.09",
+                      myFee: "(enter)"
+                    }
+                  ],
+                  participatingSection: {
+                    title: "Medicare Participating - Assignment Accepted (Mandatory)",
+                    table: [
+                      {
+                        modifier: "(none)",
+                        allowed: "$706.46",
+                        medicare80: "$##.##",
+                        patientPays: "$##.##"
+                      },
+                      {
+                        modifier: "(MPPR)",
+                        allowed: "$353.55",
+                        medicare80: "$##.##",
+                        patientPays: "$##.##"
+                      }
+                    ]
+                  },
+                  nonParticipatingAccepted: {
+                    title: "Medicare Non-Participating - Assignment Accepted (Check To Doctor)",
+                    table: [
+                      {
+                        modifier: "(none)",
+                        allowed: "$##.##",
+                        medicare80: "$##.##",
+                        patientPays: "$##.##",
+                        limitingCharge: "$##.##"
+                      },
+                      {
+                        modifier: "(MPPR)",
+                        allowed: "$##.##",
+                        medicare80: "$##.##",
+                        patientPays: "$##.##",
+                        limitingCharge: "$##.##"
+                      }
+                    ]
+                  },
+                  nonParticipatingNotAccepted: {
+                    title: "Medicare Non-Participating - Assignment NOT Accepted (Check To Patient)",
+                    table: [
+                      {
+                        modifier: "(none)",
+                        allowed: "$##.##",
+                        medicare80: "$##.##",
+                        patientPays: "$##.##",
+                        limitingCharge: "$##.##"
+                      },
+                      {
+                        modifier: "(MPPR)",
+                        allowed: "$##.##",
+                        medicare80: "$##.##",
+                        patientPays: "$##.##",
+                        limitingCharge: "$##.##"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                name: "Non-Facility (Office, etc.)",
+                type: "collapsible"
+              },
+              {
+                name: "APC Fee Information",
+                type: "collapsible"
+              },
+              {
+                name: "Fee Schedules",
+                type: "collapsible"
+              },
+              {
+                name: "UCR Fees (UCR, WC, Medicare)",
+                type: "collapsible"
+              }
+            ]
+          }
+        };
+
       case "Official CPT Descriptor":
         return {
           type: "content",
@@ -228,11 +397,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
         return {
           type: "content",
           data: "This is the maximum units that can be billed per date of service."
-        };
-      case "Medicare Allowable Fee (POS)":
-        return {
-          type: "content",
-          data: "These are Medicare fee schedule amounts by place of service."
         };
       case "RVU Breakdown":
         return {
@@ -370,23 +534,13 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
     if (content.type === "history") {
       return (
         <div className="space-y-4">
-          <div className="bg-purple-100 border border-purple-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-purple-900 flex items-center gap-2">
-                <span className="text-sm">📜</span>
-                Code History
-              </h4>
-              <Badge variant="outline" className="text-xs">auto-open</Badge>
-            </div>
-          </div>
-          
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-semibold text-gray-700">date</TableHead>
-                  <TableHead className="font-semibold text-gray-700">action</TableHead>
-                  <TableHead className="font-semibold text-gray-700">notes</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Date</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Action</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Notes</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -414,50 +568,205 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="flex items-center gap-2 cursor-help">
-                      <span className="text-2xl font-bold text-gray-900">{content.data.code} - {content.data.title}</span>
+                      <span className="text-2xl font-bold text-gray-900">{content.data.code}</span>
                       <Info className="h-4 w-4 text-gray-500" />
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-md p-3">
                     <div className="space-y-2">
-                      <p className="font-semibold">{content.data.code} - {content.data.title}</p>
-                      <p className="text-sm">{content.data.description}</p>
-                      <div className="border-t pt-2 mt-2">
-                        <p className="text-xs text-gray-600">Global Surgery Period Information:</p>
-                        <ul className="text-xs mt-1 space-y-1">
-                          <li><strong>000:</strong> Endoscopic/minor procedure - day of procedure only</li>
-                          <li><strong>010:</strong> Minor procedure - 10-day postoperative period</li>
-                          <li><strong>090:</strong> Major surgery - 1-day preop + 90-day postop period</li>
-                          <li><strong>MMM:</strong> Maternity codes - usual global period doesn't apply</li>
-                          <li><strong>XXX:</strong> Global concept doesn't apply</li>
-                          <li><strong>YYY:</strong> A/B MAC decides global concept and postop period</li>
-                          <li><strong>ZZZ:</strong> Code related to another service</li>
-                        </ul>
+                      <p className="font-semibold">Global Surgery Period Information</p>
+                      <div className="text-sm space-y-2">
+                        <p><strong>000:</strong> Medicare includes endoscopic or minor procedure with related preoperative and postoperative relative values on the day of the procedure only in the fee schedule payment amount. Medicare doesn't generally pay evaluation and management (E/M) services on the day of the procedure.</p>
+                        <p><strong>010:</strong> Medicare includes minor procedure with preoperative relative values on the day of the procedure and postoperative relative values during a 10-day postoperative period in the fee schedule amount. Medicare doesn't generally pay E/M services on the day of the procedure and during this 10-day postoperative period.</p>
+                        <p><strong>090:</strong> Medicare includes major surgery with a 1-day preoperative period and 90-day postoperative period included in the fee schedule payment amount.</p>
+                        <p><strong>MMM:</strong> Maternity codes; usual global period doesn't apply.</p>
+                        <p><strong>XXX:</strong> Global concept doesn't apply.</p>
+                        <p><strong>YYY:</strong> A/B MAC decides whether global concept applies and establishes postoperative period at time of pricing.</p>
+                        <p><strong>ZZZ:</strong> Code related to another service. Medicare always includes it in the global period of the other service.</p>
                       </div>
                     </div>
                   </TooltipContent>
                 </Tooltip>
               </div>
-              
-              {content.data.preoperative && content.data.intraoperative && content.data.postoperative && (
-                <div className="flex items-center gap-8 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-700">Preoperative:</span>
-                    <span className="font-bold text-gray-900">{content.data.preoperative}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-700">Intraoperative:</span>
-                    <span className="font-bold text-gray-900">{content.data.intraoperative}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-700">Postoperative:</span>
-                    <span className="font-bold text-gray-900">{content.data.postoperative}</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </TooltipProvider>
+      );
+    }
+
+    if (content.type === "medicare-fees") {
+      return (
+        <div className="space-y-4">
+          <div className="mb-6">
+            <h4 className="font-semibold text-gray-900 mb-2">{content.data.title}</h4>
+            <p className="text-sm text-gray-600">{content.data.note}</p>
+          </div>
+
+          <div className="space-y-2">
+            {content.data.sections.map((section, index) => (
+              <Collapsible 
+                key={index} 
+                open={openSections[section.name]} 
+                onOpenChange={() => toggleSection(section.name)}
+              >
+                <CollapsibleTrigger asChild>
+                  <div className="bg-green-600 text-white px-4 py-3 rounded-lg flex items-center justify-between cursor-pointer hover:bg-green-700 transition-colors">
+                    <div className="flex items-center gap-2">
+                      {openSections[section.name] ? (
+                        <Minus className="h-4 w-4" />
+                      ) : (
+                        <Plus className="h-4 w-4" />
+                      )}
+                      <span className="font-medium">{section.name}</span>
+                    </div>
+                  </div>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent className="mt-2">
+                  {section.name === "Facility (Hospital, etc.)" && section.content && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
+                      {/* Medicare vs. My Fee Evaluation */}
+                      <div>
+                        <h5 className="font-semibold text-gray-900 mb-4">{section.content.title}</h5>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm border-collapse">
+                            <thead>
+                              <tr className="bg-gray-50">
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">medicare allowed</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">150%</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">200%</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">my fee</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {section.content.table.map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                  <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.medicareAllowed}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.percentage150}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.percentage200}</td>
+                                  <td className="border border-gray-200 px-3 py-2 text-gray-500">{row.myFee}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Access Feature Notice */}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <p className="text-sm text-gray-700 mb-2">Calculated fee values are available.</p>
+                        <p className="text-sm text-gray-700 mb-3">Access to this feature is available in the following products:</p>
+                        <ul className="text-sm text-gray-700 mb-3 ml-4">
+                          <li>• Find-A-Code Facility Base/Plus/Complete</li>
+                        </ul>
+                        <Button variant="outline" size="sm" className="text-sm">
+                          subscribe
+                        </Button>
+                      </div>
+
+                      {/* Medicare Participating */}
+                      <div>
+                        <h5 className="font-semibold text-gray-900 mb-4">{section.content.participatingSection.title}</h5>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm border-collapse">
+                            <thead>
+                              <tr className="bg-gray-50">
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">allowed</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">medicare 80%</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">patient pays</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {section.content.participatingSection.table.map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                  <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.allowed}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.medicare80}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.patientPays}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Medicare Non-Participating - Assignment Accepted */}
+                      <div>
+                        <h5 className="font-semibold text-gray-900 mb-4">
+                          {section.content.nonParticipatingAccepted.title}
+                        </h5>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm border-collapse">
+                            <thead>
+                              <tr className="bg-gray-50">
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">allowed</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">medicare 80%</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">patient pays</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">limiting charge (amount billed)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {section.content.nonParticipatingAccepted.table.map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                  <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.allowed}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.medicare80}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.patientPays}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.limitingCharge}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Medicare Non-Participating - Assignment NOT Accepted */}
+                      <div>
+                        <h5 className="font-semibold text-gray-900 mb-4">
+                          {section.content.nonParticipatingNotAccepted.title}
+                        </h5>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm border-collapse">
+                            <thead>
+                              <tr className="bg-gray-50">
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">modifier</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">allowed</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">medicare 80%</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">patient pays</th>
+                                <th className="border border-gray-200 px-3 py-2 text-left font-medium">limiting charge (amount billed)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {section.content.nonParticipatingNotAccepted.table.map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                  <td className="border border-gray-200 px-3 py-2">{row.modifier}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.allowed}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.medicare80}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.patientPays}</td>
+                                  <td className="border border-gray-200 px-3 py-2">{row.limitingCharge}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {section.name !== "Facility (Hospital, etc.)" && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6">
+                      <p className="text-gray-600">Content for {section.name} section would appear here.</p>
+                    </div>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+          </div>
+        </div>
       );
     }
 
