@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { PdfReader } from '@/components/PdfReader';
+import { HtmlProcessor } from '@/components/HtmlProcessor';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Trash2, ArrowLeft } from 'lucide-react';
+import { FileText, Trash2, ArrowLeft, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ExtractedFile {
@@ -47,7 +47,10 @@ const PdfManager = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Codes
             </Button>
-            <h1 className="text-xl font-semibold">PDF Manager</h1>
+            <h1 className="text-xl font-semibold flex items-center space-x-2">
+              <Globe className="h-5 w-5" />
+              <span>HTML Text Extractor</span>
+            </h1>
           </div>
           <Badge variant="outline">{extractedFiles.length} files processed</Badge>
         </div>
@@ -55,9 +58,9 @@ const PdfManager = () => {
 
       <div className="p-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* PDF Reader */}
+          {/* HTML Processor */}
           <div>
-            <PdfReader onTextExtracted={handleTextExtracted} />
+            <HtmlProcessor onTextExtracted={handleTextExtracted} />
           </div>
 
           {/* Extracted Files List */}
@@ -66,15 +69,15 @@ const PdfManager = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <FileText className="h-5 w-5" />
-                  <span>Processed Files</span>
+                  <span>Extracted Text Files</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {extractedFiles.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No files processed yet</p>
-                    <p className="text-sm">Upload a PDF to get started</p>
+                    <Globe className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No HTML files processed yet</p>
+                    <p className="text-sm">Enter a GitHub HTML URL to get started</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
