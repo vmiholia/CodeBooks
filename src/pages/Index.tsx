@@ -14,12 +14,17 @@ const Index = () => {
   const [activeSection, setActiveSection] = useState<string>();
 
   const handleSectionClick = (groupName: string) => {
-    // This would trigger the tab change in CodeDetailPage
     setActiveSection(groupName);
-    // In a real implementation, you would use refs or context to communicate with CodeDetailPage
     const tabElement = document.querySelector(`[value="${groupName}"]`) as HTMLElement;
     if (tabElement) {
       tabElement.click();
+    }
+  };
+
+  const handleElementClick = (elementName: string) => {
+    // Use the global handler exposed by CodeDetailPage
+    if ((window as any).navigateToElement) {
+      (window as any).navigateToElement(elementName);
     }
   };
 
@@ -69,12 +74,13 @@ const Index = () => {
           />
         </div>
 
-        {/* Main Content - 1fr */}
+        {/* Main Content */}
         <div className="flex-1 bg-gray-50">
           {selectedCode ? (
             <CodeDetailPage 
               codeId={selectedCode} 
               onActiveTabChange={setActiveSection}
+              onElementNavigate={handleElementClick}
             />
           ) : (
             <div className="flex items-center justify-center h-96 text-muted-foreground">
@@ -83,10 +89,11 @@ const Index = () => {
           )}
         </div>
 
-        {/* Right Table of Contents - 260px */}
+        {/* Right Table of Contents */}
         <div className="w-65 border-l bg-white">
           <RightToc 
             onSectionClick={handleSectionClick}
+            onElementClick={handleElementClick}
             activeSection={activeSection}
           />
         </div>

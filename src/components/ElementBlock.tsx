@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +11,9 @@ interface ElementBlockProps {
 }
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
+  // Create a scroll target ID from the element name
+  const scrollId = element.Element.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+
   const renderElementContent = () => {
     switch (element.Element) {
       case "Official CPT Descriptor":
@@ -207,7 +209,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
         );
 
       default:
-        // Creative freedom for undefined elements
         return (
           <Alert>
             <Info className="h-4 w-4" />
@@ -220,7 +221,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   };
 
   return (
-    <Card className="border border-border/50">
+    <Card id={scrollId} className="border border-border/50 scroll-mt-6">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-semibold text-foreground">
           {element.Element}

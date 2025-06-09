@@ -1,20 +1,19 @@
 
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CODE_DATA_ELEMENTS, SAMPLE_CODES, type CodeDataElement } from "@/types/codeData";
+import { CODE_DATA_ELEMENTS, SAMPLE_CODES } from "@/types/codeData";
 import { ElementBlock } from "@/components/ElementBlock";
-import { KeyElements } from "@/components/KeyElements";
 
 interface CodeDetailPageProps {
   codeId: string;
   onActiveTabChange?: (tab: string) => void;
+  onElementNavigate?: (elementName: string) => void;
 }
 
-export const CodeDetailPage = ({ codeId, onActiveTabChange }: CodeDetailPageProps) => {
+export const CodeDetailPage = ({ codeId, onActiveTabChange, onElementNavigate }: CodeDetailPageProps) => {
   const [activeTab, setActiveTab] = useState<string>();
   
   // Get unique groups and sort by first appearance
@@ -33,12 +32,39 @@ export const CodeDetailPage = ({ codeId, onActiveTabChange }: CodeDetailPageProp
     onActiveTabChange?.(tab);
   };
 
-  // Get elements for current tab, sorted by priority
-  const currentElements = useMemo(() => {
-    return CODE_DATA_ELEMENTS
-      .filter(item => item.Group === currentTab)
-      .sort((a, b) => a.Priority - b.Priority);
-  }, [currentTab]);
+  // Handle element navigation
+  const handleElementNavigate = (elementName: string) => {
+    // Find which group this element belongs to
+    const element = CODE_DATA_ELEMENTS.find(item => item.Element === elementName);
+    if (element && element.Group !== currentTab) {
+      // Switch to the correct tab first
+      handleTabChange(element.Group);
+    }
+    
+    // Scroll to the element after a brief delay to allow tab change
+    setTimeout(() => {
+      const scrollId = elementName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+      const targetElement = document.getElementById(scrollId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+    
+    onElementNavigate?.(elementName);
+  };
+
+  // Expose the handler to parent component
+  React.useEffect(() => {
+    if (onElementNavigate) {
+      // This is a hack to expose the handler to the parent
+      // In a real app, you'd use a ref or context
+      (window as any).navigateToElement = handleElementNavigate;
+    }
+  }, [onElementNavigate]);
 
   // Get code details
   const codeDetails = SAMPLE_CODES.find(code => code.id === codeId);
@@ -76,9 +102,6 @@ export const CodeDetailPage = ({ codeId, onActiveTabChange }: CodeDetailPageProp
           </Button>
         </div>
       </div>
-
-      {/* Key Elements Display */}
-      <KeyElements codeId={codeId} />
 
       {/* Dynamic Tabs */}
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
