@@ -105,17 +105,19 @@ export const CodeDetailPage = ({ codeId, onActiveTabChange, onElementNavigate }:
 
       {/* Dynamic Tabs */}
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className={`grid w-full grid-cols-${groups.length} mb-8 bg-muted`}>
-          {groups.map((group) => (
-            <TabsTrigger 
-              key={group} 
-              value={group}
-              className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm whitespace-nowrap px-2 py-2"
-            >
-              {group}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100 min-w-max">
+            {groups.map((group) => (
+              <TabsTrigger 
+                key={group} 
+                value={group}
+                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap px-4"
+              >
+                {group}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         {groups.map((group) => (
           <TabsContent key={group} value={group} className="space-y-6">
