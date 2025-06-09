@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { CodeDataElement } from "@/types/codeData";
 
 interface ElementBlockProps {
@@ -23,6 +24,15 @@ interface HistoryData {
   notes: string;
 }
 
+interface GlobalPeriodData {
+  code: string;
+  title: string;
+  description: string;
+  preoperative?: string;
+  intraoperative?: string;
+  postoperative?: string;
+}
+
 interface MockContentModifiers {
   type: "modifiers";
   data: ModifierData[];
@@ -33,12 +43,17 @@ interface MockContentHistory {
   data: HistoryData[];
 }
 
+interface MockContentGlobalPeriod {
+  type: "global-period";
+  data: GlobalPeriodData;
+}
+
 interface MockContentGeneral {
   type: "content";
   data: string;
 }
 
-type MockContent = MockContentModifiers | MockContentHistory | MockContentGeneral;
+type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentGeneral;
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   const [showAllModifiers, setShowAllModifiers] = useState(false);
@@ -161,6 +176,19 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           ]
         };
 
+      case "Global Period":
+        return {
+          type: "global-period",
+          data: {
+            code: "090",
+            title: "Major Surgery",
+            description: "Medicare includes major surgery with a 1-day preoperative period and 90-day postoperative period included in the fee schedule payment amount.",
+            preoperative: "8%",
+            intraoperative: "83%",
+            postoperative: "9%"
+          }
+        };
+
       case "Official CPT Descriptor":
         return {
           type: "content",
@@ -180,11 +208,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
         return {
           type: "content",
           data: "These are similar or commonly bundled procedures."
-        };
-      case "Global Period":
-        return {
-          type: "content",
-          data: "This is the number of days included in the global surgical package."
         };
       case "Inpatient-Only (IPO) Flag":
         return {
@@ -303,7 +326,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowAllModifiers(!showAllModifiers)}
-                className="ml-4 text-xs h-8 px-3"
+                className="ml-4 text-xs h-8 px-3 bg-white hover:bg-gray-50 border-purple-300 text-purple-700 hover:text-purple-800"
               >
                 {showAllModifiers ? (
                   <>
@@ -378,6 +401,63 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
             </Table>
           </div>
         </div>
+      );
+    }
+
+    if (content.type === "global-period") {
+      return (
+        <TooltipProvider>
+          <div className="space-y-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-sm text-gray-600 font-medium">global days</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-help">
+                      <span className="text-2xl font-bold text-gray-900">{content.data.code} - {content.data.title}</span>
+                      <Info className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-md p-3">
+                    <div className="space-y-2">
+                      <p className="font-semibold">{content.data.code} - {content.data.title}</p>
+                      <p className="text-sm">{content.data.description}</p>
+                      <div className="border-t pt-2 mt-2">
+                        <p className="text-xs text-gray-600">Global Surgery Period Information:</p>
+                        <ul className="text-xs mt-1 space-y-1">
+                          <li><strong>000:</strong> Endoscopic/minor procedure - day of procedure only</li>
+                          <li><strong>010:</strong> Minor procedure - 10-day postoperative period</li>
+                          <li><strong>090:</strong> Major surgery - 1-day preop + 90-day postop period</li>
+                          <li><strong>MMM:</strong> Maternity codes - usual global period doesn't apply</li>
+                          <li><strong>XXX:</strong> Global concept doesn't apply</li>
+                          <li><strong>YYY:</strong> A/B MAC decides global concept and postop period</li>
+                          <li><strong>ZZZ:</strong> Code related to another service</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              
+              {content.data.preoperative && content.data.intraoperative && content.data.postoperative && (
+                <div className="flex items-center gap-8 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">Preoperative:</span>
+                    <span className="font-bold text-gray-900">{content.data.preoperative}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">Intraoperative:</span>
+                    <span className="font-bold text-gray-900">{content.data.intraoperative}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">Postoperative:</span>
+                    <span className="font-bold text-gray-900">{content.data.postoperative}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </TooltipProvider>
       );
     }
 
