@@ -1,13 +1,11 @@
 
 import { pdfjs } from 'react-pdf';
 
-// Configure PDF.js worker using bundled worker
+// Configure PDF.js to work without web workers (legacy mode)
 export const configurePdfWorker = () => {
-  // Use the worker from node_modules that gets bundled by Vite
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.js',
-    import.meta.url
-  ).toString();
+  // Disable worker to avoid loading issues in bundled environments
+  pdfjs.GlobalWorkerOptions.workerSrc = '';
+  pdfjs.disableWorker = true;
   
-  console.log('PDF.js worker configured:', pdfjs.GlobalWorkerOptions.workerSrc);
+  console.log('PDF.js configured in legacy mode (no worker)');
 };
