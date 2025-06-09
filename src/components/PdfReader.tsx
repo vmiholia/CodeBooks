@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Upload, FileText, X, Download } from 'lucide-react';
@@ -7,8 +8,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+// Configure PDF.js worker with better error handling
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.js',
+    import.meta.url,
+  ).toString();
+}
 
 interface PdfReaderProps {
   onTextExtracted?: (text: string, filename: string) => void;
@@ -24,6 +30,11 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [loadProgress, setLoadProgress] = useState(0);
   const [extractProgress, setExtractProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  // Reset worker if needed
+  useEffect(() => {
+    console.log('PDF.js worker source:', pdfjs.GlobalWorkerOptions.workerSrc);
+  }, []);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('File input changed:', event.target.files);
@@ -44,7 +55,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       setCurrentPage(1);
       setNumPages(null);
       setIsLoading(true);
-      setLoadProgress(10); // Start with some progress to show activity
+      setLoadProgress(10);
       setExtractProgress(0);
       console.log('PDF file set successfully, loading should start now');
     } else {
@@ -76,7 +87,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
 
   const onDocumentLoadProgress = useCallback(({ loaded, total }: { loaded: number; total: number }) => {
     if (total > 0) {
-      const progress = Math.min(Math.round((loaded / total) * 90), 90); // Cap at 90% until fully loaded
+      const progress = Math.min(Math.round((loaded / total) * 90), 90);
       console.log('PDF loading progress:', progress, '%', loaded, '/', total);
       setLoadProgress(progress);
     }
@@ -111,7 +122,6 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
           .join(' ');
         fullText += `\n\n--- Page ${i} ---\n\n${pageText}`;
         
-        // Update extraction progress
         const progress = Math.round((i / pdf.numPages) * 100);
         setExtractProgress(progress);
       }
@@ -140,7 +150,6 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     setLoadProgress(0);
     setExtractProgress(0);
     
-    // Reset the file input
     const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
@@ -279,33 +288,41 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
                   <div className="text-sm text-muted-foreground">Loading PDF... {loadProgress}%</div>
                 </div>
               ) : (
-                <Document
-                  file={file}
-                  onLoadSuccess={onDocumentLoadSuccess}
-                  onLoadError={onDocumentLoadError}
-                  onLoadProgress={onDocumentLoadProgress}
-                  loading={
-                    <div className="p-8 text-center">
-                      <div className="text-sm text-muted-foreground">Loading PDF document...</div>
-                    </div>
-                  }
-                  error={
-                    <div className="p-8 text-center text-red-600">
-                      <div>Failed to load PDF</div>
-                      <div className="text-sm mt-2">Check console for details</div>
-                    </div>
-                  }
-                >
-                  <Page
-                    pageNumber={currentPage}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                    className="mx-auto"
-                    width={Math.min(600, window.innerWidth - 100)}
-                    onLoadSuccess={() => console.log(`Page ${currentPage} rendered successfully`)}
-                    onLoadError={(error) => console.error(`Page ${currentPage} load error:`, error)}
-                  />
-                </Document>
+                <div key={file.name}>
+                  <Document
+                    file={file}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    onLoadError={onDocumentLoadError}
+                    onLoadProgress={onDocumentLoadProgress}
+                    loading={
+                      <div className="p-8 text-center">
+                        <div className="text-sm text-muted-foreground">Initializing PDF...</div>
+                      </div>
+                    }
+                    error={
+                      <div className="p-8 text-center text-red-600">
+                        <div>Failed to load PDF</div>
+                        <div className="text-sm mt-2">Check console for details</div>
+                      </div>
+                    }
+                    options={{
+                      cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
+                      cMapPacked: true,
+                    }}
+                  >
+                    {numPages && (
+                      <Page
+                        pageNumber={currentPage}
+                        renderTextLayer={false}
+                        renderAnnotationLayer={false}
+                        className="mx-auto"
+                        width={Math.min(600, window.innerWidth - 100)}
+                        onLoadSuccess={() => console.log(`Page ${currentPage} rendered successfully`)}
+                        onLoadError={(error) => console.error(`Page ${currentPage} load error:`, error)}
+                      />
+                    )}
+                  </Document>
+                </div>
               )}
             </div>
           </CardContent>
