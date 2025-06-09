@@ -29,39 +29,40 @@ export const RightToc = ({ onSectionClick, onElementClick, activeSection }: Righ
   };
 
   return (
-    <div className="p-4 h-full">
-      <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wide">
+    <div className="p-3 h-full overflow-y-auto">
+      <h3 className="font-semibold text-xs text-muted-foreground mb-3 uppercase tracking-wide">
         Table of Contents
       </h3>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {groups.map((group) => {
           const elementsInGroup = CODE_DATA_ELEMENTS.filter(item => item.Group === group);
           const isActive = activeSection === group;
           
           return (
-            <div key={group} className="space-y-2">
+            <div key={group} className="space-y-1">
               <Button
                 variant="ghost"
-                className={`w-full justify-start h-auto p-2 text-left font-medium text-sm hover:bg-muted ${
+                className={`w-full justify-start h-auto p-2 text-left font-medium text-xs hover:bg-muted ${
                   isActive ? 'bg-muted text-primary' : ''
                 }`}
                 onClick={() => onSectionClick(group)}
               >
-                {group}
+                <span className="truncate">{group}</span>
               </Button>
-              <div className="ml-4 space-y-1">
+              <div className="ml-2 space-y-1">
                 {elementsInGroup.slice(0, 3).map((element) => {
                   const metric = getMetricForElement(element.Element);
                   return (
-                    <div key={element.Element} className="flex items-center justify-between">
+                    <div key={element.Element} className="flex items-center gap-1">
                       <button
-                        className="text-xs text-muted-foreground truncate hover:text-primary transition-colors text-left flex-1"
+                        className="text-xs text-muted-foreground hover:text-primary transition-colors text-left flex-1 min-w-0 truncate"
                         onClick={() => onElementClick(element.Element)}
+                        title={element.Element}
                       >
                         {element.Element}
                       </button>
                       {metric && (
-                        <Badge variant="outline" className="text-xs ml-2 flex-shrink-0">
+                        <Badge variant="outline" className="text-xs flex-shrink-0 px-1.5 py-0.5">
                           {metric}
                         </Badge>
                       )}
@@ -69,7 +70,7 @@ export const RightToc = ({ onSectionClick, onElementClick, activeSection }: Righ
                   );
                 })}
                 {elementsInGroup.length > 3 && (
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted-foreground ml-0">
                     +{elementsInGroup.length - 3} more
                   </div>
                 )}

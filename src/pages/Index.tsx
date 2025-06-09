@@ -66,7 +66,7 @@ const Index = () => {
       {/* Main Grid Layout */}
       <div className="flex">
         {/* Left Navigation - 240px with dark sidebar styling */}
-        <div className="w-60 bg-sidebar border-r border-sidebar-border">
+        <div className="w-60 bg-sidebar border-r border-sidebar-border flex-shrink-0">
           <LeftNav 
             selectedCode={selectedCode} 
             onCodeSelect={setSelectedCode}
@@ -75,7 +75,7 @@ const Index = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 bg-gray-50">
+        <div className="flex-1 bg-gray-50 min-w-0">
           {selectedCode ? (
             <CodeDetailPage 
               codeId={selectedCode} 
@@ -90,7 +90,7 @@ const Index = () => {
         </div>
 
         {/* Right Table of Contents */}
-        <div className="w-65 border-l bg-white">
+        <div className="w-64 border-l bg-white flex-shrink-0">
           <RightToc 
             onSectionClick={handleSectionClick}
             onElementClick={handleElementClick}
