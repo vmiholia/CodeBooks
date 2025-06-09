@@ -60,16 +60,11 @@ export const RightToc = ({ onSectionClick, onElementClick, activeSection }: Righ
                       >
                         {element.Element}
                       </button>
-                      <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
-                        {metric && (
-                          <Badge variant="outline" className="text-xs">
-                            {metric}
-                          </Badge>
-                        )}
-                        <Badge variant="outline" className="text-xs">
-                          {element.Priority}
+                      {metric && (
+                        <Badge variant="outline" className="text-xs ml-2 flex-shrink-0">
+                          {metric}
                         </Badge>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
