@@ -23,38 +23,62 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [error, setError] = useState<string | null>(null);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('File input changed:', event.target.files);
     const selectedFile = event.target.files?.[0];
-    if (selectedFile && selectedFile.type === 'application/pdf') {
+    
+    if (!selectedFile) {
+      console.log('No file selected');
+      return;
+    }
+
+    console.log('Selected file:', selectedFile.name, selectedFile.type, selectedFile.size);
+    
+    if (selectedFile.type === 'application/pdf') {
       setFile(selectedFile);
       setError(null);
       setExtractedText('');
       setCurrentPage(1);
+      setIsLoading(true);
+      console.log('PDF file set successfully');
     } else {
-      setError('Please select a valid PDF file');
+      console.log('Invalid file type:', selectedFile.type);
+      setError(`Please select a valid PDF file. Selected file type: ${selectedFile.type}`);
     }
   }, []);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
+    console.log('PDF loaded successfully with', numPages, 'pages');
     setNumPages(numPages);
     setIsLoading(false);
   }, []);
 
   const onDocumentLoadError = useCallback((error: Error) => {
+    console.error('PDF load error:', error);
     setError(`Failed to load PDF: ${error.message}`);
     setIsLoading(false);
   }, []);
 
   const extractTextFromPdf = useCallback(async () => {
-    if (!file) return;
+    if (!file) {
+      console.log('No file to extract text from');
+      return;
+    }
 
+    console.log('Starting text extraction from:', file.name);
     setIsLoading(true);
+    setError(null);
+    
     try {
       const arrayBuffer = await file.arrayBuffer();
+      console.log('File read as array buffer, size:', arrayBuffer.byteLength);
+      
       const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+      console.log('PDF document loaded, pages:', pdf.numPages);
       
       let fullText = '';
       
       for (let i = 1; i <= pdf.numPages; i++) {
+        console.log('Extracting text from page', i);
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
         const pageText = textContent.items
@@ -63,9 +87,11 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
         fullText += `\n\n--- Page ${i} ---\n\n${pageText}`;
       }
       
+      console.log('Text extraction completed, total length:', fullText.length);
       setExtractedText(fullText);
       onTextExtracted?.(fullText, file.name);
     } catch (error) {
+      console.error('Text extraction error:', error);
       setError(`Failed to extract text: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
@@ -73,11 +99,19 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   }, [file, onTextExtracted]);
 
   const clearFile = useCallback(() => {
+    console.log('Clearing file');
     setFile(null);
     setNumPages(null);
     setCurrentPage(1);
     setExtractedText('');
     setError(null);
+    setIsLoading(false);
+    
+    // Reset the file input
+    const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }, []);
 
   const downloadExtractedText = useCallback(() => {
@@ -114,14 +148,14 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
               </p>
               <input
                 type="file"
-                accept=".pdf"
+                accept=".pdf,application/pdf"
                 onChange={onFileChange}
                 className="hidden"
                 id="pdf-upload"
               />
               <label htmlFor="pdf-upload">
-                <Button variant="outline" className="cursor-pointer">
-                  Choose PDF File
+                <Button variant="outline" className="cursor-pointer" asChild>
+                  <span>Choose PDF File</span>
                 </Button>
               </label>
             </div>
@@ -158,7 +192,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       )}
 
       {/* PDF Viewer */}
-      {file && (
+      {file && !error && (
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -189,20 +223,26 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="border rounded-lg overflow-auto max-h-96">
-              <Document
-                file={file}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={onDocumentLoadError}
-                loading={<div className="p-8 text-center">Loading PDF...</div>}
-              >
-                <Page
-                  pageNumber={currentPage}
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                  className="mx-auto"
-                />
-              </Document>
+            <div className="border rounded-lg overflow-auto max-h-96 bg-gray-50">
+              {isLoading ? (
+                <div className="p-8 text-center">Loading PDF...</div>
+              ) : (
+                <Document
+                  file={file}
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  onLoadError={onDocumentLoadError}
+                  loading={<div className="p-8 text-center">Loading PDF...</div>}
+                  error={<div className="p-8 text-center text-red-600">Failed to load PDF</div>}
+                >
+                  <Page
+                    pageNumber={currentPage}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    className="mx-auto"
+                    width={Math.min(600, window.innerWidth - 100)}
+                  />
+                </Document>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -225,6 +265,11 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
               <pre className="whitespace-pre-wrap text-sm font-mono">
                 {extractedText}
               </pre>
+            </div>
+            <div className="mt-2">
+              <Badge variant="outline">
+                {(extractedText.length / 1000).toFixed(1)}k characters extracted
+              </Badge>
             </div>
           </CardContent>
         </Card>
