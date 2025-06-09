@@ -1,9 +1,15 @@
 
 export interface CodeDataElement {
-  Group: string;
-  Element: string;
+  GroupID: number;
+  ElementID: number;
+  ElementName: string;
   Priority: number;
   Definition: string;
+}
+
+export interface CodeGroup {
+  GroupID: number;
+  GroupName: string;
 }
 
 export interface CodeDetail {
@@ -13,25 +19,49 @@ export interface CodeDetail {
   category: string;
 }
 
+export const CODE_GROUPS: CodeGroup[] = [
+  { GroupID: 1, GroupName: "Description & Usage" },
+  { GroupID: 2, GroupName: "Documentation & Compliance" },
+  { GroupID: 3, GroupName: "Billing & Reimbursement" },
+  { GroupID: 4, GroupName: "Crosswalks & References" },
+  { GroupID: 5, GroupName: "History & Metadata" }
+];
+
 export const CODE_DATA_ELEMENTS: CodeDataElement[] = [
-  { Group: "Description & Usage", Element: "Official CPT Descriptor", Priority: 0, Definition: "The official descriptor as published in the CPT codebook" },
-  { Group: "Description & Usage", Element: "Lay Description", Priority: 0, Definition: "Patient-friendly explanation of the procedure" },
-  { Group: "Description & Usage", Element: "Clinical Vignette", Priority: 1, Definition: "Section: \"Clinical Vignettes\" → Card titled \"Example Scenario\"" },
+  // Description & Usage (GroupID: 1)
+  { GroupID: 1, ElementID: 1, ElementName: "CPT Code", Priority: 0, Definition: "The CPT code identifier" },
+  { GroupID: 1, ElementID: 2, ElementName: "Official CPT Descriptor", Priority: 1, Definition: "The official descriptor as published in the CPT codebook" },
+  { GroupID: 1, ElementID: 3, ElementName: "Lay Description", Priority: 2, Definition: "Patient-friendly explanation of the procedure" },
+  { GroupID: 1, ElementID: 4, ElementName: "Clinical Vignette", Priority: 3, Definition: "Example clinical scenario demonstrating appropriate use" },
+  { GroupID: 1, ElementID: 5, ElementName: "Related Procedure Codes", Priority: 4, Definition: "Similar or commonly bundled procedures" },
   
-  { Group: "Documentation & Compliance", Element: "CCI Edits & Modifier Indicator", Priority: 0, Definition: "Validator results: Pass/Fail, Edit Rationale, Modifier list" },
-  { Group: "Documentation & Compliance", Element: "Global Period", Priority: 1, Definition: "Information Card with large number 0/10/90 + descriptor" },
-  { Group: "Documentation & Compliance", Element: "Documentation Requirements", Priority: 2, Definition: "Required documentation elements for proper coding" },
+  // Documentation & Compliance (GroupID: 2)
+  { GroupID: 2, ElementID: 1, ElementName: "CCI Edits & Modifier Indicator", Priority: 0, Definition: "Correct Coding Initiative edits and modifier requirements" },
+  { GroupID: 2, ElementID: 2, ElementName: "Global Period", Priority: 1, Definition: "Number of days included in global surgical package" },
+  { GroupID: 2, ElementID: 3, ElementName: "Inpatient-Only (IPO) Flag", Priority: 2, Definition: "Indicator if procedure must be performed in inpatient setting" },
+  { GroupID: 2, ElementID: 4, ElementName: "LCD & NCD Coverage Info", Priority: 3, Definition: "Local and National Coverage Determination information" },
+  { GroupID: 2, ElementID: 5, ElementName: "Documentation Tips", Priority: 4, Definition: "Best practices for documentation requirements" },
+  { GroupID: 2, ElementID: 6, ElementName: "MUE (Medically Unlikely Edit)", Priority: 5, Definition: "Maximum units that can be billed per date of service" },
   
-  { Group: "Billing & Reimbursement", Element: "Medicare Allowable Fee (POS)", Priority: 0, Definition: "Fee table Facility vs Non-Facility" },
-  { Group: "Billing & Reimbursement", Element: "RVU Breakdown", Priority: 1, Definition: "Work RVUs, Practice Expense, Malpractice components" },
-  { Group: "Billing & Reimbursement", Element: "Billing Guidelines", Priority: 2, Definition: "Special billing considerations and requirements" },
+  // Billing & Reimbursement (GroupID: 3)
+  { GroupID: 3, ElementID: 1, ElementName: "Medicare Allowable Fee (POS)", Priority: 0, Definition: "Medicare fee schedule amounts by place of service" },
+  { GroupID: 3, ElementID: 2, ElementName: "RVU Breakdown", Priority: 1, Definition: "Work, Practice Expense, and Malpractice RVU components" },
+  { GroupID: 3, ElementID: 3, ElementName: "ASC Payment Indicator", Priority: 2, Definition: "Ambulatory Surgery Center payment classification" },
+  { GroupID: 3, ElementID: 4, ElementName: "UCR / WC Benchmark Fees", Priority: 3, Definition: "Usual, Customary, and Reasonable / Workers' Compensation fee benchmarks" },
+  { GroupID: 3, ElementID: 5, ElementName: "Custom Fee Modeling", Priority: 4, Definition: "Customizable fee schedule modeling tools" },
+  { GroupID: 3, ElementID: 6, ElementName: "ASA Base Units & Fee Calc", Priority: 5, Definition: "Anesthesia base units and fee calculation methodology" },
   
-  { Group: "Crosswalks & References", Element: "ICD-10-CM Crosswalks", Priority: 0, Definition: "Table of mappings Source / Target / Relationship" },
-  { Group: "Crosswalks & References", Element: "Related Procedures", Priority: 1, Definition: "Similar or commonly bundled procedures" },
-  { Group: "Crosswalks & References", Element: "External References", Priority: 2, Definition: "Links to relevant medical literature and guidelines" },
+  // Crosswalks & References (GroupID: 4)
+  { GroupID: 4, ElementID: 1, ElementName: "ICD-10-CM Crosswalks", Priority: 0, Definition: "Mappings to ICD-10-CM diagnosis codes" },
+  { GroupID: 4, ElementID: 2, ElementName: "ICD-10-PCS Crosswalk", Priority: 1, Definition: "Mappings to ICD-10-PCS procedure codes" },
+  { GroupID: 4, ElementID: 3, ElementName: "HCPCS / Supply Crosswalk", Priority: 2, Definition: "Related HCPCS codes and supply items" },
+  { GroupID: 4, ElementID: 4, ElementName: "CPT Assistant Articles", Priority: 3, Definition: "Relevant CPT Assistant clarifications and guidance" },
+  { GroupID: 4, ElementID: 5, ElementName: "AHA Coding Clinic", Priority: 4, Definition: "American Hospital Association Coding Clinic references" },
   
-  { Group: "History & Metadata", Element: "Code History", Priority: 0, Definition: "Creation date, revisions, and status changes" },
-  { Group: "History & Metadata", Element: "Usage Statistics", Priority: 1, Definition: "Frequency of use and trending data" }
+  // History & Metadata (GroupID: 5)
+  { GroupID: 5, ElementID: 1, ElementName: "Code History & Valuation", Priority: 0, Definition: "Historical changes and valuation updates" },
+  { GroupID: 5, ElementID: 2, ElementName: "Visual Icons / Alerts", Priority: 1, Definition: "Visual indicators for important code characteristics" },
+  { GroupID: 5, ElementID: 3, ElementName: "Real-Time Claim Scrubber", Priority: 2, Definition: "Real-time validation and claim scrubbing results" }
 ];
 
 export const SAMPLE_CODES: CodeDetail[] = [

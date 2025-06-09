@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,10 +13,18 @@ interface ElementBlockProps {
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   // Create a scroll target ID from the element name
-  const scrollId = element.Element.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+  const scrollId = element.ElementName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
 
   const renderElementContent = () => {
-    switch (element.Element) {
+    switch (element.ElementName) {
+      case "CPT Code":
+        return (
+          <div className="text-center">
+            <div className="text-6xl font-bold text-primary mb-2">{codeId}</div>
+            <p className="text-lg font-medium">Current Procedural Terminology Code</p>
+          </div>
+        );
+
       case "Official CPT Descriptor":
         return (
           <div className="prose prose-sm max-w-none">
@@ -61,6 +70,31 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
               </div>
             </CardContent>
           </Card>
+        );
+
+      case "Related Procedure Codes":
+        return (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Code</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Relationship</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>29887</TableCell>
+                <TableCell>Arthroscopic repair of ACL</TableCell>
+                <TableCell><Badge variant="secondary">Similar</Badge></TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>29889</TableCell>
+                <TableCell>Arthroscopic ACL reconstruction with allograft</TableCell>
+                <TableCell><Badge variant="secondary">Alternative</Badge></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         );
 
       case "CCI Edits & Modifier Indicator":
@@ -213,7 +247,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              {element.Definition || `Content for ${element.Element} would be displayed here with appropriate UI treatment based on the data type and usage context.`}
+              {element.Definition || `Content for ${element.ElementName} would be displayed here with appropriate UI treatment based on the data type and usage context.`}
             </AlertDescription>
           </Alert>
         );
@@ -224,7 +258,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
     <Card id={scrollId} className="border border-border/50 scroll-mt-6">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-semibold text-foreground">
-          {element.Element}
+          {element.ElementName}
         </CardTitle>
       </CardHeader>
       <CardContent>

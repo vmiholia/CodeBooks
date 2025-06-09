@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CODE_DATA_ELEMENTS, SAMPLE_CODES } from "@/types/codeData";
+import { CODE_DATA_ELEMENTS, CODE_GROUPS, SAMPLE_CODES } from "@/types/codeData";
 import { ElementBlock } from "@/components/ElementBlock";
 
 interface CodeDetailPageProps {
@@ -16,14 +16,13 @@ interface CodeDetailPageProps {
 export const CodeDetailPage = ({ codeId, onActiveTabChange, onElementNavigate }: CodeDetailPageProps) => {
   const [activeTab, setActiveTab] = useState<string>();
   
-  // Get unique groups and sort by first appearance
+  // Get groups in order by GroupID
   const groups = useMemo(() => {
-    const uniqueGroups = Array.from(new Set(CODE_DATA_ELEMENTS.map(item => item.Group)));
-    return uniqueGroups;
+    return CODE_GROUPS.sort((a, b) => a.GroupID - b.GroupID);
   }, []);
 
   // Set default tab to first group
-  const defaultTab = groups[0] || "";
+  const defaultTab = groups[0]?.GroupName || "";
   const currentTab = activeTab || defaultTab;
 
   // Handle tab change and notify parent
@@ -35,10 +34,13 @@ export const CodeDetailPage = ({ codeId, onActiveTabChange, onElementNavigate }:
   // Handle element navigation
   const handleElementNavigate = (elementName: string) => {
     // Find which group this element belongs to
-    const element = CODE_DATA_ELEMENTS.find(item => item.Element === elementName);
-    if (element && element.Group !== currentTab) {
-      // Switch to the correct tab first
-      handleTabChange(element.Group);
+    const element = CODE_DATA_ELEMENTS.find(item => item.ElementName === elementName);
+    if (element) {
+      const group = CODE_GROUPS.find(g => g.GroupID === element.GroupID);
+      if (group && group.GroupName !== currentTab) {
+        // Switch to the correct tab first
+        handleTabChange(group.GroupName);
+      }
     }
     
     // Scroll to the element after a brief delay to allow tab change
@@ -105,28 +107,26 @@ export const CodeDetailPage = ({ codeId, onActiveTabChange, onElementNavigate }:
 
       {/* Dynamic Tabs */}
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
-        <div className="overflow-x-auto">
-          <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100 min-w-max">
-            {groups.map((group) => (
-              <TabsTrigger 
-                key={group} 
-                value={group}
-                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap px-4"
-              >
-                {group}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
+        <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100">
+          {groups.map((group) => (
+            <TabsTrigger 
+              key={group.GroupID} 
+              value={group.GroupName}
+              className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap px-4"
+            >
+              {group.GroupName}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
         {groups.map((group) => (
-          <TabsContent key={group} value={group} className="space-y-6">
+          <TabsContent key={group.GroupID} value={group.GroupName} className="space-y-6">
             {CODE_DATA_ELEMENTS
-              .filter(item => item.Group === group)
+              .filter(item => item.GroupID === group.GroupID)
               .sort((a, b) => a.Priority - b.Priority)
               .map((element, index) => (
                 <ElementBlock
-                  key={`${group}-${element.Element}-${index}`}
+                  key={`${group.GroupID}-${element.ElementID}-${index}`}
                   element={element}
                   codeId={codeId}
                 />
