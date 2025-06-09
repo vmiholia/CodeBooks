@@ -1,11 +1,74 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import { Search, HelpCircle, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CodeDetailPage } from "@/components/CodeDetailPage";
+import { LeftNav } from "@/components/LeftNav";
+import { RightToc } from "@/components/RightToc";
 
 const Index = () => {
+  const [selectedCode, setSelectedCode] = useState<string | null>("29888");
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      {/* TopBar */}
+      <div className="border-b bg-white sticky top-0 z-50">
+        <div className="flex items-center justify-between px-6 py-3">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-semibold text-foreground">CodeBooks</h1>
+            <div className="relative w-96">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search medical codes, procedures..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Button variant="ghost" size="sm">
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="" />
+              <AvatarFallback>
+                <User className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Grid Layout */}
+      <div className="flex">
+        {/* Left Navigation - 240px */}
+        <div className="w-60 border-r bg-muted/30">
+          <LeftNav 
+            selectedCode={selectedCode} 
+            onCodeSelect={setSelectedCode}
+            searchQuery={searchQuery}
+          />
+        </div>
+
+        {/* Main Content - 1fr */}
+        <div className="flex-1">
+          {selectedCode ? (
+            <CodeDetailPage codeId={selectedCode} />
+          ) : (
+            <div className="flex items-center justify-center h-96 text-muted-foreground">
+              Select a code to view details
+            </div>
+          )}
+        </div>
+
+        {/* Right Table of Contents - 260px */}
+        <div className="w-65 border-l bg-muted/30">
+          <RightToc />
+        </div>
       </div>
     </div>
   );
