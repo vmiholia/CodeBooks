@@ -1,10 +1,7 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, XCircle, Info, DollarSign, Clock, Building2, FileText } from "lucide-react";
-import type { CodeDataElement } from "@/types/codeData";
+import { CodeDataElement } from "@/types/codeData";
 
 interface ElementBlockProps {
   element: CodeDataElement;
@@ -12,527 +9,294 @@ interface ElementBlockProps {
 }
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
-  // Create a scroll target ID from the element name
   const scrollId = element.ElementName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
 
-  const renderElementContent = () => {
-    switch (element.ElementName) {
+  // Mock data for different element types
+  const getMockContent = (elementName: string) => {
+    switch (elementName) {
+      case "CCI Edits & Modifier Indicator":
+        return {
+          type: "modifiers",
+          data: [
+            {
+              percentage: "56.34%",
+              modifier: "59",
+              title: "Distinct procedural service",
+              description: "Under certain circumstances, it may be necessary to indicate that a procedure or service was distinct or independent from other non-e/m services performed on the same day. Modifier 59 is used to identify procedures/services, other than e/m services, that are not normally reported together, but are appropriate under the circumstances. Documentation must support a different session, different procedure or surgery, different site or organ system, separate incision/excision, separate lesion, or separate injury (or area of injury in extensive injuries) not ordinarily encountered or performed on the same day by the same individual. However, when another already established modifier is appropriate it should be used rather than modifier 59. Only if no more descriptive modifier is available, and the use of modifier 59 best explains the circumstances, should modifier 59 be used. Note: modifier 59 should not be appended to an e/m service. To report a separate and distinct e/m service with a non-e/m service performed on the same date, see modifier 25."
+            },
+            {
+              percentage: "21.43%",
+              modifier: "51",
+              title: "Multiple procedures",
+              description: "When multiple procedures, other than e/m services, physical medicine and rehabilitation services or provision of supplies (eg, vaccines), are performed at the same session by the same individual, the primary procedure or service may be reported as listed. The additional procedure(s) or service(s) may be identified by appending modifier 51 to the additional procedure or service code(s). Note: this modifier should not be appended to designated \"add-on\" codes (see appendix d)."
+            },
+            {
+              percentage: "7.16%",
+              modifier: "XU",
+              title: "Unusual non-overlapping service",
+              description: "The use of a service that is distinct because it does not overlap usual components of the main service"
+            },
+            {
+              percentage: "5.50%",
+              modifier: "GW",
+              title: "Service not related to the hospice patient's terminal condition",
+              description: ""
+            },
+            {
+              percentage: "2.33%",
+              modifier: "GA",
+              title: "Waiver of liability statement issued as required by payer policy, individual case",
+              description: ""
+            },
+            {
+              percentage: "1.85%",
+              modifier: "GC",
+              title: "This service has been performed in part by a resident under the direction of a teaching physician",
+              description: ""
+            },
+            {
+              percentage: "1.37%",
+              modifier: "GZ",
+              title: "Item or service expected to be denied as not reasonable and necessary",
+              description: ""
+            },
+            {
+              percentage: "0.95%",
+              modifier: "CR",
+              title: "Catastrophe/disaster related",
+              description: ""
+            },
+            {
+              percentage: "0.72%",
+              modifier: "AQ",
+              title: "Physician providing a service in an unlisted health professional shortage area (hpsa)",
+              description: ""
+            },
+            {
+              percentage: "0.61%",
+              modifier: "76",
+              title: "Repeat procedure or service by same physician or other qualified health care professional",
+              description: "It may be necessary to indicate that a procedure or service was repeated by the same physician or other qualified health care professional subsequent to the original procedure or service. This circumstance may be reported by adding modifier 76 to the repeated procedure or service. Note: this modifier should not be appended to an e/m service."
+            },
+            {
+              percentage: "0.44%",
+              modifier: "XE",
+              title: "Separate encounter",
+              description: "A service that is distinct because it occurred during a separate encounter"
+            },
+            {
+              percentage: "0.35%",
+              modifier: "XS",
+              title: "Separate structure",
+              description: "A service that is distinct because it was performed on a separate organ/structure"
+            },
+            {
+              percentage: "0.28%",
+              modifier: "Q1",
+              title: "Routine clinical service provided in a clinical research study that is in an approved clinical research study",
+              description: ""
+            },
+            {
+              percentage: "0.23%",
+              modifier: "PD",
+              title: "Diagnostic or related non diagnostic item or service provided in a wholly owned or operated entity to a patient who is admitted as an inpatient within 3 days",
+              description: ""
+            },
+            {
+              percentage: "0.21%",
+              modifier: "GY",
+              title: "Item or service statutorily excluded, does not meet the definition of any medicare benefit or, for non-medicare insurers, is not a contract benefit",
+              description: ""
+            }
+          ]
+        };
+
       case "Official CPT Descriptor":
-        if (codeId === "93005") {
-          return (
-            <div className="prose prose-sm max-w-none">
-              <p className="text-foreground leading-relaxed font-medium mb-2">
-                Electrocardiogram, routine ECG with at least 12 leads; tracing only, without interpretation and report
-              </p>
-              <div className="bg-muted/50 p-4 rounded-lg mt-4">
-                <h4 className="font-medium mb-2">Code Components:</h4>
-                <ul className="text-sm space-y-1">
-                  <li>• Routine ECG with minimum 12 leads</li>
-                  <li>• Tracing only - technical component</li>
-                  <li>• Does not include interpretation or report</li>
-                </ul>
-              </div>
-            </div>
-          );
-        }
-        return (
-          <div className="prose prose-sm max-w-none">
-            <p className="text-foreground leading-relaxed">
-              Arthroscopically aided anterior cruciate ligament repair/augmentation or reconstruction. 
-              This procedure involves the use of arthroscopic techniques to visualize and assist in the 
-              repair or reconstruction of a torn anterior cruciate ligament (ACL).
-            </p>
-          </div>
-        );
-
+        return {
+          type: "content",
+          data: "This is the official CPT descriptor."
+        };
       case "Lay Description":
-        if (codeId === "93005") {
-          return (
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <p className="text-foreground mb-3">
-                An electrocardiogram (ECG or EKG) is a test that records the electrical activity of the heart. 
-                This code covers only the technical recording of the heart rhythm using at least 12 different 
-                electrical views of the heart.
-              </p>
-              <div className="text-sm text-muted-foreground">
-                <strong>Patient-friendly explanation:</strong> A routine heart rhythm test where electrodes 
-                are placed on your chest, arms, and legs to record your heart's electrical activity. 
-                This code covers only the recording portion, not the doctor's review of the results.
-              </div>
-            </div>
-          );
-        }
-        return (
-          <div className="bg-muted/50 p-4 rounded-lg">
-            <p className="text-foreground">
-              A minimally invasive surgical procedure to repair or replace a torn ACL using 
-              small incisions and a camera to guide the surgery. This helps restore knee 
-              stability and function.
-            </p>
-          </div>
-        );
-
+        return {
+          type: "content",
+          data: "This is a patient-friendly explanation of the procedure."
+        };
       case "Clinical Vignette":
-        if (codeId === "93005") {
-          return (
-            <Card className="border-l-4 border-l-blue-500">
-              <CardHeader>
-                <CardTitle className="text-lg">Example Scenario</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  A 45-year-old patient presents to the clinic with complaints of chest pain and palpitations. 
-                  The physician orders a routine 12-lead ECG to evaluate cardiac rhythm and identify any 
-                  abnormalities.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline">Indication</Badge>
-                    <span className="text-sm">Chest pain evaluation, routine cardiac screening</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline">Procedure</Badge>
-                    <span className="text-sm">12-lead ECG tracing performed by technician</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline">Code Usage</Badge>
-                    <span className="text-sm">93005 for tracing only (separate interpretation code required)</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        }
-        return (
-          <Card className="border-l-4 border-l-blue-500">
-            <CardHeader>
-              <CardTitle className="text-lg">Example Scenario</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-3">
-                A 22-year-old soccer player presents with knee instability following a 
-                non-contact injury during practice. MRI confirms complete ACL tear.
-              </p>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline">Indication</Badge>
-                  <span className="text-sm">Complete ACL rupture with instability</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline">Approach</Badge>
-                  <span className="text-sm">Arthroscopic reconstruction with graft</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
+        return {
+          type: "content",
+          data: "This is an example clinical scenario demonstrating appropriate use."
+        };
       case "Related Procedure Codes":
-        if (codeId === "93005") {
-          return (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Relationship</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>93000</TableCell>
-                  <TableCell>Electrocardiogram, routine ECG with interpretation and report</TableCell>
-                  <TableCell><Badge variant="secondary">Complete Service</Badge></TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>93010</TableCell>
-                  <TableCell>Electrocardiogram, routine ECG interpretation and report only</TableCell>
-                  <TableCell><Badge variant="secondary">Professional Component</Badge></TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>93040</TableCell>
-                  <TableCell>Rhythm ECG, 1-3 leads; with interpretation and report</TableCell>
-                  <TableCell><Badge variant="outline">Related</Badge></TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          );
-        }
-        return (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Relationship</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>29887</TableCell>
-                <TableCell>Arthroscopic repair of ACL</TableCell>
-                <TableCell><Badge variant="secondary">Similar</Badge></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>29889</TableCell>
-                <TableCell>Arthroscopic ACL reconstruction with allograft</TableCell>
-                <TableCell><Badge variant="secondary">Alternative</Badge></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        );
-
+        return {
+          type: "content",
+          data: "These are similar or commonly bundled procedures."
+        };
       case "Global Period":
-        if (codeId === "93005") {
-          return (
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center mb-4">
-                  <Clock className="h-6 w-6 text-primary mr-2" />
-                  <span className="text-lg font-medium">Global Period</span>
-                </div>
-                <div className="text-6xl font-bold text-primary mb-2">XXX</div>
-                <p className="text-lg font-medium">Global Period Not Applicable</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Diagnostic procedures typically do not have global periods
-                </p>
-              </CardContent>
-            </Card>
-          );
-        }
-        return (
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="text-6xl font-bold text-primary mb-2">90</div>
-              <p className="text-lg font-medium">Days Global Period</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Includes pre-operative, intra-operative, and post-operative care
-              </p>
-            </CardContent>
-          </Card>
-        );
-
-      case "Medicare Allowable Fee (POS)":
-        if (codeId === "93005") {
-          return (
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <DollarSign className="h-5 w-5 text-green-600" />
-                <span className="font-medium">2024 Medicare Fee Schedule - CPT 93005</span>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Place of Service</TableHead>
-                    <TableHead>Facility Fee</TableHead>
-                    <TableHead>Non-Facility Fee</TableHead>
-                    <TableHead>Limiting Charge</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>Office</TableCell>
-                    <TableCell>$13.16</TableCell>
-                    <TableCell>$25.84</TableCell>
-                    <TableCell>$29.72</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Outpatient Hospital</TableCell>
-                    <TableCell>$13.16</TableCell>
-                    <TableCell>-</TableCell>
-                    <TableCell>$15.13</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>ASC</TableCell>
-                    <TableCell>$13.16</TableCell>
-                    <TableCell>-</TableCell>
-                    <TableCell>$15.13</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          );
-        }
-        return (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 mb-4">
-              <DollarSign className="h-5 w-5 text-green-600" />
-              <span className="font-medium">2024 Medicare Fee Schedule</span>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Place of Service</TableHead>
-                  <TableHead>Facility Fee</TableHead>
-                  <TableHead>Non-Facility Fee</TableHead>
-                  <TableHead>Limiting Charge</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Outpatient Hospital</TableCell>
-                  <TableCell>$1,247.52</TableCell>
-                  <TableCell>$1,689.24</TableCell>
-                  <TableCell>$1,942.63</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>ASC</TableCell>
-                  <TableCell>$1,247.52</TableCell>
-                  <TableCell>-</TableCell>
-                  <TableCell>$1,434.65</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        );
-
-      case "RVU Breakdown":
-        if (codeId === "93005") {
-          return (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Component</TableHead>
-                  <TableHead>Facility</TableHead>
-                  <TableHead>Non-Facility</TableHead>
-                  <TableHead>Description</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">Work RVU</TableCell>
-                  <TableCell>0.17</TableCell>
-                  <TableCell>0.17</TableCell>
-                  <TableCell>Physician work component</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">PE RVU</TableCell>
-                  <TableCell>0.19</TableCell>
-                  <TableCell>0.53</TableCell>
-                  <TableCell>Practice expense</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">MP RVU</TableCell>
-                  <TableCell>0.02</TableCell>
-                  <TableCell>0.02</TableCell>
-                  <TableCell>Malpractice expense</TableCell>
-                </TableRow>
-                <TableRow className="border-t-2">
-                  <TableCell className="font-bold">Total RVU</TableCell>
-                  <TableCell className="font-bold">0.38</TableCell>
-                  <TableCell className="font-bold">0.72</TableCell>
-                  <TableCell className="font-bold">Total relative value</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          );
-        }
-        return (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Component</TableHead>
-                <TableHead>Facility</TableHead>
-                <TableHead>Non-Facility</TableHead>
-                <TableHead>Description</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Work RVU</TableCell>
-                <TableCell>22.25</TableCell>
-                <TableCell>22.25</TableCell>
-                <TableCell>Physician work component</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">PE RVU</TableCell>
-                <TableCell>12.84</TableCell>
-                <TableCell>28.47</TableCell>
-                <TableCell>Practice expense</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">MP RVU</TableCell>
-                <TableCell>2.48</TableCell>
-                <TableCell>2.48</TableCell>
-                <TableCell>Malpractice expense</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        );
-
-      case "ICD-10-CM Crosswalks":
-        if (codeId === "93005") {
-          return (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ICD-10-CM Code</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Relationship</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Z01.810</TableCell>
-                  <TableCell>Encounter for preprocedural cardiovascular examination</TableCell>
-                  <TableCell><Badge>Primary</Badge></TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>R06.02</TableCell>
-                  <TableCell>Shortness of breath</TableCell>
-                  <TableCell><Badge>Common</Badge></TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>R50.9</TableCell>
-                  <TableCell>Fever, unspecified</TableCell>
-                  <TableCell><Badge variant="secondary">Secondary</Badge></TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>I25.10</TableCell>
-                  <TableCell>Atherosclerotic heart disease of native coronary artery without angina pectoris</TableCell>
-                  <TableCell><Badge variant="secondary">Secondary</Badge></TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          );
-        }
-        return (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ICD-10-CM Code</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Relationship</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>S83.511A</TableCell>
-                <TableCell>Sprain of anterior cruciate ligament of right knee, initial encounter</TableCell>
-                <TableCell><Badge>Primary</Badge></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>S83.512A</TableCell>
-                <TableCell>Sprain of anterior cruciate ligament of left knee, initial encounter</TableCell>
-                <TableCell><Badge>Primary</Badge></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>M23.611</TableCell>
-                <TableCell>Other spontaneous disruption of anterior cruciate ligament of right knee</TableCell>
-                <TableCell><Badge variant="secondary">Secondary</Badge></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        );
-
+        return {
+          type: "content",
+          data: "This is the number of days included in the global surgical package."
+        };
       case "Inpatient-Only (IPO) Flag":
-        if (codeId === "93005") {
-          return (
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center mb-4">
-                  <Building2 className="h-6 w-6 text-green-600 mr-2" />
-                  <span className="text-lg font-medium">Inpatient-Only Status</span>
-                </div>
-                <div className="text-4xl font-bold text-green-600 mb-2">No</div>
-                <p className="text-lg font-medium text-green-600">Not Inpatient-Only</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This procedure can be performed in various settings including outpatient facilities
-                </p>
-              </CardContent>
-            </Card>
-          );
-        }
-        return (
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="text-4xl font-bold text-orange-600 mb-2">Yes</div>
-              <p className="text-lg font-medium text-orange-600">Inpatient-Only</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                This procedure must be performed in an inpatient hospital setting
-              </p>
-            </CardContent>
-          </Card>
-        );
-
+        return {
+          type: "content",
+          data: "This indicates if the procedure must be performed in an inpatient setting."
+        };
+      case "LCD & NCD Coverage Info":
+        return {
+          type: "content",
+          data: "This is local and national coverage determination information."
+        };
+      case "Documentation Tips":
+        return {
+          type: "content",
+          data: "These are best practices for documentation requirements."
+        };
       case "MUE (Medically Unlikely Edit)":
-        if (codeId === "93005") {
-          return (
-            <Card className="border-l-4 border-l-orange-500">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <FileText className="h-5 w-5 mr-2" />
-                  MUE Limits
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Setting</TableHead>
-                      <TableHead>MUE Value</TableHead>
-                      <TableHead>Edit Type</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>Practitioner Services</TableCell>
-                      <TableCell className="font-bold">1</TableCell>
-                      <TableCell><Badge variant="outline">Date of Service</Badge></TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Outpatient Hospital</TableCell>
-                      <TableCell className="font-bold">1</TableCell>
-                      <TableCell><Badge variant="outline">Date of Service</Badge></TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-                <p className="text-sm text-muted-foreground mt-3">
-                  Maximum of 1 unit per date of service. Additional units require documentation supporting medical necessity.
-                </p>
-              </CardContent>
-            </Card>
-          );
-        }
-        return (
-          <Card className="border-l-4 border-l-orange-500">
-            <CardHeader>
-              <CardTitle className="text-lg">MUE Limits</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center mb-4">
-                <div className="text-4xl font-bold text-primary mb-2">2</div>
-                <p className="text-lg font-medium">Maximum Units per Date of Service</p>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Bilateral procedures or documentation supporting medical necessity required for additional units.
-              </p>
-            </CardContent>
-          </Card>
-        );
-
+        return {
+          type: "content",
+          data: "This is the maximum units that can be billed per date of service."
+        };
+      case "Medicare Allowable Fee (POS)":
+        return {
+          type: "content",
+          data: "These are Medicare fee schedule amounts by place of service."
+        };
+      case "RVU Breakdown":
+        return {
+          type: "content",
+          data: "This is the work, practice expense, and malpractice RVU components."
+        };
+      case "ASC Payment Indicator":
+        return {
+          type: "content",
+          data: "This is the Ambulatory Surgery Center payment classification."
+        };
+      case "UCR / WC Benchmark Fees":
+        return {
+          type: "content",
+          data: "These are Usual, Customary, and Reasonable / Workers' Compensation fee benchmarks."
+        };
+      case "Custom Fee Modeling":
+        return {
+          type: "content",
+          data: "These are customizable fee schedule modeling tools."
+        };
+      case "ASA Base Units & Fee Calc":
+        return {
+          type: "content",
+          data: "This is the Anesthesia base units and fee calculation methodology."
+        };
+      case "ICD-10-CM Crosswalks":
+        return {
+          type: "content",
+          data: "These are mappings to ICD-10-CM diagnosis codes."
+        };
+      case "ICD-10-PCS Crosswalk":
+        return {
+          type: "content",
+          data: "These are mappings to ICD-10-PCS procedure codes."
+        };
+      case "HCPCS / Supply Crosswalk":
+        return {
+          type: "content",
+          data: "These are related HCPCS codes and supply items."
+        };
+      case "CPT Assistant Articles":
+        return {
+          type: "content",
+          data: "These are relevant CPT Assistant clarifications and guidance."
+        };
+      case "AHA Coding Clinic":
+        return {
+          type: "content",
+          data: "These are American Hospital Association Coding Clinic references."
+        };
+      case "Code History & Valuation":
+        return {
+          type: "content",
+          data: "These are historical changes and valuation updates."
+        };
+      case "Visual Icons / Alerts":
+        return {
+          type: "content",
+          data: "These are visual indicators for important code characteristics."
+        };
+      case "Real-Time Claim Scrubber":
+        return {
+          type: "content",
+          data: "These are real-time validation and claim scrubbing results."
+        };
       default:
-        return (
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              {element.Definition || `Content for ${element.ElementName} would be displayed here with appropriate UI treatment based on the data type and usage context.`}
-            </AlertDescription>
-          </Alert>
-        );
+        return {
+          type: "content",
+          data: `This is sample content for ${elementName}. In a real application, this would be populated with actual data from your API or database.`
+        };
     }
   };
 
+  const content = getMockContent(element.ElementName);
+
+  const renderContent = () => {
+    if (content.type === "modifiers") {
+      return (
+        <div className="space-y-6">
+          <div className="bg-purple-100 border border-purple-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-semibold text-purple-900 flex items-center gap-2">
+                <span className="text-sm">📊</span>
+                Top Modifiers - Most Often Billed
+              </h4>
+              <Badge variant="outline" className="text-xs">auto-open</Badge>
+            </div>
+            <p className="text-sm text-purple-700 mb-4">
+              Top modifiers billed to Medicare are shown. <span className="text-blue-600 cursor-pointer hover:underline">view all modifiers</span>
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            {content.data.map((item: any, index: number) => (
+              <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
+                <div className="flex items-start gap-3 mb-2">
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 font-mono text-sm px-2 py-1">
+                    {item.percentage}
+                  </Badge>
+                  <Badge variant="default" className="bg-purple-600 text-white font-bold text-sm px-3 py-1">
+                    {item.modifier}
+                  </Badge>
+                  <span className="font-semibold text-gray-900">{item.title}</span>
+                </div>
+                {item.description && (
+                  <p className="text-sm text-gray-700 leading-relaxed ml-16">
+                    {item.description}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="prose prose-sm max-w-none">
+        <p className="text-gray-700">{content.data}</p>
+      </div>
+    );
+  };
+
   return (
-    <Card id={scrollId} className="border border-border/50 scroll-mt-6">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold text-foreground">
-          {element.ElementName}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {renderElementContent()}
-      </CardContent>
-    </Card>
+    <div id={scrollId} className="scroll-mt-20">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">{element.ElementName}</h3>
+          {element.Definition && (
+            <p className="text-sm text-gray-600 mt-1">{element.Definition}</p>
+          )}
+        </div>
+        <div className="p-6">
+          {renderContent()}
+        </div>
+      </div>
+    </div>
   );
 };
