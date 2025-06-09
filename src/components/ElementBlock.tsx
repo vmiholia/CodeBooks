@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,11 +9,30 @@ interface ElementBlockProps {
   codeId: string;
 }
 
+interface ModifierData {
+  percentage: string;
+  modifier: string;
+  title: string;
+  description: string;
+}
+
+interface MockContentModifiers {
+  type: "modifiers";
+  data: ModifierData[];
+}
+
+interface MockContentGeneral {
+  type: "content";
+  data: string;
+}
+
+type MockContent = MockContentModifiers | MockContentGeneral;
+
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   const scrollId = element.ElementName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
 
   // Mock data for different element types
-  const getMockContent = (elementName: string) => {
+  const getMockContent = (elementName: string): MockContent => {
     switch (elementName) {
       case "CCI Edits & Modifier Indicator":
         return {
@@ -254,7 +274,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           </div>
           
           <div className="space-y-4">
-            {content.data.map((item: any, index: number) => (
+            {content.data.map((item, index) => (
               <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
                 <div className="flex items-start gap-3 mb-2">
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 font-mono text-sm px-2 py-1">
