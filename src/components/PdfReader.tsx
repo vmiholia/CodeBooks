@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Upload, FileText, X, Download } from 'lucide-react';
@@ -8,8 +7,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Configure PDF.js worker for Vite
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
 
 interface PdfReaderProps {
   onTextExtracted?: (text: string, filename: string) => void;
@@ -27,7 +29,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('PDF.js worker configured:', pdfjs.GlobalWorkerOptions.workerSrc);
+    console.log('PDF.js worker configured for Vite:', pdfjs.GlobalWorkerOptions.workerSrc);
   }, []);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
