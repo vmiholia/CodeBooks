@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Upload, FileText, X, Download } from 'lucide-react';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -20,6 +22,8 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [extractedText, setExtractedText] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [extractProgress, setExtractProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +43,8 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       setExtractedText('');
       setCurrentPage(1);
       setIsLoading(true);
-      setIsExtracting(true);
+      setLoadProgress(0);
+      setExtractProgress(0);
       console.log('PDF file set successfully');
     } else {
       console.log('Invalid file type:', selectedFile.type);
@@ -51,6 +56,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     console.log('PDF loaded successfully with', numPages, 'pages');
     setNumPages(numPages);
     setIsLoading(false);
+    setLoadProgress(100);
     // Auto-extract text when PDF loads successfully
     setTimeout(() => {
       extractTextFromPdf();
@@ -61,6 +67,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     console.error('PDF load error:', error);
     setError(`Failed to load PDF: ${error.message}`);
     setIsLoading(false);
+    setLoadProgress(0);
   }, []);
 
   const extractTextFromPdf = useCallback(async () => {
@@ -71,6 +78,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
 
     console.log('Starting text extraction from:', file.name);
     setIsExtracting(true);
+    setExtractProgress(0);
     setError(null);
     
     try {
@@ -90,6 +98,10 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
           .map((item: any) => item.str)
           .join(' ');
         fullText += `\n\n--- Page ${i} ---\n\n${pageText}`;
+        
+        // Update extraction progress
+        const progress = Math.round((i / pdf.numPages) * 100);
+        setExtractProgress(progress);
       }
       
       console.log('Text extraction completed, total length:', fullText.length);
@@ -98,6 +110,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     } catch (error) {
       console.error('Text extraction error:', error);
       setError(`Failed to extract text: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setExtractProgress(0);
     } finally {
       setIsExtracting(false);
     }
@@ -112,6 +125,8 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     setError(null);
     setIsLoading(false);
     setIsExtracting(false);
+    setLoadProgress(0);
+    setExtractProgress(0);
     
     // Reset the file input
     const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
@@ -172,14 +187,37 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
                   <FileText className="h-4 w-4" />
                   <span className="font-medium truncate">{file.name}</span>
                   <Badge variant="outline">{(file.size / 1024 / 1024).toFixed(2)} MB</Badge>
-                  {isExtracting && (
-                    <Badge variant="secondary">Extracting text...</Badge>
-                  )}
                 </div>
                 <Button onClick={clearFile} variant="outline" size="sm">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
+              
+              {/* Progress indicators */}
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Loading PDF</span>
+                    <span>{loadProgress}%</span>
+                  </div>
+                  <Progress value={loadProgress} className="h-2" />
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Extracting Text</span>
+                    <span>{extractProgress}%</span>
+                  </div>
+                  <Progress value={extractProgress} className="h-2" />
+                </div>
+              </div>
+              
+              {isLoading && (
+                <Badge variant="secondary">Loading PDF...</Badge>
+              )}
+              {isExtracting && (
+                <Badge variant="secondary">Extracting text...</Badge>
+              )}
             </div>
           )}
         </CardContent>
