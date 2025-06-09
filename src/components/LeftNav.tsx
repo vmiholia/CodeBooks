@@ -34,14 +34,14 @@ export const LeftNav = ({ selectedCode, onCodeSelect, searchQuery }: LeftNavProp
             )}
             onClick={() => onCodeSelect(code.id)}
           >
-            <div className="space-y-2 w-full">
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-semibold text-sm">{code.code}</span>
-                <Badge variant="outline" className="text-xs border-sidebar-foreground/20 text-sidebar-foreground/70">
+            <div className="space-y-2 w-full min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-mono font-semibold text-sm truncate">{code.code}</span>
+                <Badge variant="outline" className="text-xs border-sidebar-foreground/20 text-sidebar-foreground/70 whitespace-nowrap flex-shrink-0">
                   {code.category}
                 </Badge>
               </div>
-              <p className="text-xs text-sidebar-foreground/60 text-left leading-relaxed">
+              <p className="text-xs text-sidebar-foreground/60 text-left leading-relaxed line-clamp-2 break-words">
                 {code.title}
               </p>
             </div>

@@ -49,20 +49,20 @@ export const CodeDetailPage = ({ codeId }: CodeDetailPageProps) => {
     <div className="p-6 max-w-5xl mx-auto bg-white min-h-screen">
       {/* Code Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="flex items-center space-x-3 mb-2">
+        <div className="flex items-start justify-between mb-4 gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center space-x-3 mb-2 flex-wrap">
               <h1 className="text-3xl font-bold text-foreground">{codeDetails.code}</h1>
-              <Badge variant="outline" className="border-primary text-primary">{codeDetails.category}</Badge>
+              <Badge variant="outline" className="border-primary text-primary whitespace-nowrap">{codeDetails.category}</Badge>
               <Button variant="ghost" size="sm" className="text-gray-600 hover:text-primary">
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-            <p className="text-lg text-muted-foreground max-w-4xl">
+            <p className="text-lg text-muted-foreground leading-relaxed">
               {codeDetails.title}
             </p>
           </div>
-          <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+          <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground whitespace-nowrap flex-shrink-0">
             <ExternalLink className="h-4 w-4 mr-2" />
             External Ref
           </Button>
@@ -71,17 +71,19 @@ export const CodeDetailPage = ({ codeId }: CodeDetailPageProps) => {
 
       {/* Dynamic Tabs */}
       <Tabs value={currentTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100">
-          {groups.map((group) => (
-            <TabsTrigger 
-              key={group} 
-              value={group}
-              className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              {group}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100 min-w-max">
+            {groups.map((group) => (
+              <TabsTrigger 
+                key={group} 
+                value={group}
+                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap px-4"
+              >
+                {group}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         {groups.map((group) => (
           <TabsContent key={group} value={group} className="space-y-6">
