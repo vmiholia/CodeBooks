@@ -1,14 +1,10 @@
 
-
-
 import { pdfjs } from 'react-pdf';
 
-// Configure PDF.js to work without web workers (legacy mode)
+// Configure PDF.js to use CDN worker
 export const configurePdfWorker = () => {
-  // Disable worker by setting workerSrc to empty string
-  pdfjs.GlobalWorkerOptions.workerSrc = '';
+  // Use the PDF.js worker from CDN
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
   
-  console.log('PDF.js configured in legacy mode (no worker)');
+  console.log('PDF.js configured with CDN worker:', pdfjs.GlobalWorkerOptions.workerSrc);
 };
-
-
