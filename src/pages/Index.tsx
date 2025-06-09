@@ -18,7 +18,11 @@ const Index = () => {
       <div className="border-b bg-white sticky top-0 z-50">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold text-foreground">CodeBooks</h1>
+            <img 
+              src="/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png" 
+              alt="RapidClaims CodeBooks" 
+              className="h-8"
+            />
             <div className="relative w-96">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
