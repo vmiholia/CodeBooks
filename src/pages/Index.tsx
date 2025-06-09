@@ -11,6 +11,17 @@ import { RightToc } from "@/components/RightToc";
 const Index = () => {
   const [selectedCode, setSelectedCode] = useState<string | null>("29888");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeSection, setActiveSection] = useState<string>();
+
+  const handleSectionClick = (groupName: string) => {
+    // This would trigger the tab change in CodeDetailPage
+    setActiveSection(groupName);
+    // In a real implementation, you would use refs or context to communicate with CodeDetailPage
+    const tabElement = document.querySelector(`[value="${groupName}"]`) as HTMLElement;
+    if (tabElement) {
+      tabElement.click();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,7 +72,10 @@ const Index = () => {
         {/* Main Content - 1fr */}
         <div className="flex-1 bg-gray-50">
           {selectedCode ? (
-            <CodeDetailPage codeId={selectedCode} />
+            <CodeDetailPage 
+              codeId={selectedCode} 
+              onActiveTabChange={setActiveSection}
+            />
           ) : (
             <div className="flex items-center justify-center h-96 text-muted-foreground">
               Select a code to view details
@@ -71,7 +85,10 @@ const Index = () => {
 
         {/* Right Table of Contents - 260px */}
         <div className="w-65 border-l bg-white">
-          <RightToc />
+          <RightToc 
+            onSectionClick={handleSectionClick}
+            activeSection={activeSection}
+          />
         </div>
       </div>
     </div>

@@ -7,12 +7,14 @@ import { Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CODE_DATA_ELEMENTS, SAMPLE_CODES, type CodeDataElement } from "@/types/codeData";
 import { ElementBlock } from "@/components/ElementBlock";
+import { KeyElements } from "@/components/KeyElements";
 
 interface CodeDetailPageProps {
   codeId: string;
+  onActiveTabChange?: (tab: string) => void;
 }
 
-export const CodeDetailPage = ({ codeId }: CodeDetailPageProps) => {
+export const CodeDetailPage = ({ codeId, onActiveTabChange }: CodeDetailPageProps) => {
   const [activeTab, setActiveTab] = useState<string>();
   
   // Get unique groups and sort by first appearance
@@ -24,6 +26,12 @@ export const CodeDetailPage = ({ codeId }: CodeDetailPageProps) => {
   // Set default tab to first group
   const defaultTab = groups[0] || "";
   const currentTab = activeTab || defaultTab;
+
+  // Handle tab change and notify parent
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    onActiveTabChange?.(tab);
+  };
 
   // Get elements for current tab, sorted by priority
   const currentElements = useMemo(() => {
@@ -69,8 +77,11 @@ export const CodeDetailPage = ({ codeId }: CodeDetailPageProps) => {
         </div>
       </div>
 
+      {/* Key Elements Display */}
+      <KeyElements codeId={codeId} />
+
       {/* Dynamic Tabs */}
-      <Tabs value={currentTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
         <div className="overflow-x-auto">
           <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100 min-w-max">
             {groups.map((group) => (

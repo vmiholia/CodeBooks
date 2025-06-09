@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CODE_DATA_ELEMENTS } from "@/types/codeData";
 
-export const RightToc = () => {
-  const groups = Array.from(new Set(CODE_DATA_ELEMENTS.map(item => item.Group)));
+interface RightTocProps {
+  onSectionClick: (groupName: string) => void;
+  activeSection?: string;
+}
 
-  const scrollToSection = (groupName: string) => {
-    // In a real implementation, this would scroll to the tab section
-    console.log(`Scroll to ${groupName}`);
-  };
+export const RightToc = ({ onSectionClick, activeSection }: RightTocProps) => {
+  const groups = Array.from(new Set(CODE_DATA_ELEMENTS.map(item => item.Group)));
 
   return (
     <div className="p-4 h-full">
@@ -19,12 +19,16 @@ export const RightToc = () => {
       <div className="space-y-3">
         {groups.map((group) => {
           const elementsInGroup = CODE_DATA_ELEMENTS.filter(item => item.Group === group);
+          const isActive = activeSection === group;
+          
           return (
             <div key={group} className="space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start h-auto p-2 text-left font-medium text-sm"
-                onClick={() => scrollToSection(group)}
+                className={`w-full justify-start h-auto p-2 text-left font-medium text-sm hover:bg-muted ${
+                  isActive ? 'bg-muted text-primary' : ''
+                }`}
+                onClick={() => onSectionClick(group)}
               >
                 {group}
               </Button>
