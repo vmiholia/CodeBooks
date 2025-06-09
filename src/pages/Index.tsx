@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, HelpCircle, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CodeDetailPage } from "@/components/CodeDetailPage";
 import { LeftNav } from "@/components/LeftNav";
 import { RightToc } from "@/components/RightToc";
+import { Link } from "react-router-dom";
+import { FileText } from "lucide-react";
 
 const Index = () => {
   const [selectedCode, setSelectedCode] = useState<string | null>("29888");
@@ -50,6 +51,12 @@ const Index = () => {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            <Link to="/pdf-manager">
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-primary">
+                <FileText className="h-4 w-4 mr-2" />
+                PDF Manager
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm" className="text-gray-600 hover:text-primary">
               <HelpCircle className="h-4 w-4" />
             </Button>
