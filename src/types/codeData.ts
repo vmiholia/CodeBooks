@@ -28,8 +28,7 @@ export const CODE_GROUPS: CodeGroup[] = [
 ];
 
 export const CODE_DATA_ELEMENTS: CodeDataElement[] = [
-  // Description & Usage (GroupID: 1)
-  { GroupID: 1, ElementID: 1, ElementName: "CPT Code", Priority: 0, Definition: "The CPT code identifier" },
+  // Description & Usage (GroupID: 1) - Removed CPT Code as it's shown in header
   { GroupID: 1, ElementID: 2, ElementName: "Official CPT Descriptor", Priority: 1, Definition: "The official descriptor as published in the CPT codebook" },
   { GroupID: 1, ElementID: 3, ElementName: "Lay Description", Priority: 2, Definition: "Patient-friendly explanation of the procedure" },
   { GroupID: 1, ElementID: 4, ElementName: "Clinical Vignette", Priority: 3, Definition: "Example clinical scenario demonstrating appropriate use" },

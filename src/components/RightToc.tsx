@@ -19,6 +19,10 @@ export const RightToc = ({ onSectionClick, onElementClick, activeSection }: Righ
       "Medicare Allowable Fee (POS)": "$1,247",
       "RVU Breakdown": "37.57",
       "ICD-10-CM Crosswalks": "270",
+      "ICD-10-PCS Crosswalk": "85",
+      "HCPCS / Supply Crosswalk": "42",
+      "CPT Assistant Articles": "15",
+      "AHA Coding Clinic": "8",
       "CCI Edits & Modifier Indicator": "2",
       "Documentation Tips": "5",
       "Related Procedure Codes": "12",
@@ -50,7 +54,7 @@ export const RightToc = ({ onSectionClick, onElementClick, activeSection }: Righ
                 <span className="truncate">{group.GroupName}</span>
               </Button>
               <div className="ml-2 space-y-1">
-                {elementsInGroup.slice(0, 3).map((element) => {
+                {elementsInGroup.map((element) => {
                   const metric = getMetricForElement(element.ElementName);
                   return (
                     <div key={element.ElementID} className="flex items-center gap-1">
@@ -69,11 +73,6 @@ export const RightToc = ({ onSectionClick, onElementClick, activeSection }: Righ
                     </div>
                   );
                 })}
-                {elementsInGroup.length > 3 && (
-                  <div className="text-xs text-muted-foreground ml-0">
-                    +{elementsInGroup.length - 3} more
-                  </div>
-                )}
               </div>
             </div>
           );
