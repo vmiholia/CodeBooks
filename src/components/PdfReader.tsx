@@ -8,13 +8,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
-// Configure PDF.js worker with better error handling
-if (typeof window !== 'undefined') {
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.js',
-    import.meta.url,
-  ).toString();
-}
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 interface PdfReaderProps {
   onTextExtracted?: (text: string, filename: string) => void;
@@ -31,13 +26,12 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [extractProgress, setExtractProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset worker if needed
   useEffect(() => {
-    console.log('PDF.js worker source:', pdfjs.GlobalWorkerOptions.workerSrc);
+    console.log('PDF.js worker configured:', pdfjs.GlobalWorkerOptions.workerSrc);
   }, []);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File input changed:', event.target.files);
+    console.log('File input changed');
     const selectedFile = event.target.files?.[0];
     
     if (!selectedFile) {
@@ -45,59 +39,42 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       return;
     }
 
-    console.log('Selected file:', selectedFile.name, selectedFile.type, selectedFile.size);
+    console.log('File selected:', selectedFile.name, selectedFile.type, selectedFile.size);
     
     if (selectedFile.type === 'application/pdf') {
-      console.log('Setting file and initializing states...');
       setFile(selectedFile);
       setError(null);
       setExtractedText('');
       setCurrentPage(1);
       setNumPages(null);
       setIsLoading(true);
-      setLoadProgress(10);
+      setLoadProgress(0);
       setExtractProgress(0);
-      console.log('PDF file set successfully, loading should start now');
+      console.log('PDF file set, starting load process');
     } else {
-      console.log('Invalid file type:', selectedFile.type);
       setError(`Please select a valid PDF file. Selected file type: ${selectedFile.type}`);
     }
   }, []);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
-    console.log('onDocumentLoadSuccess called with', numPages, 'pages');
+    console.log('PDF loaded successfully with', numPages, 'pages');
     setNumPages(numPages);
     setIsLoading(false);
     setLoadProgress(100);
-    console.log('PDF loaded successfully, starting text extraction...');
     
-    // Auto-extract text when PDF loads successfully
-    setTimeout(() => {
-      console.log('About to call extractTextFromPdf');
-      extractTextFromPdf();
-    }, 100);
+    // Start text extraction automatically
+    extractTextFromPdf();
   }, []);
 
   const onDocumentLoadError = useCallback((error: Error) => {
-    console.error('onDocumentLoadError called:', error);
+    console.error('PDF load error:', error);
     setError(`Failed to load PDF: ${error.message}`);
     setIsLoading(false);
     setLoadProgress(0);
   }, []);
 
-  const onDocumentLoadProgress = useCallback(({ loaded, total }: { loaded: number; total: number }) => {
-    if (total > 0) {
-      const progress = Math.min(Math.round((loaded / total) * 90), 90);
-      console.log('PDF loading progress:', progress, '%', loaded, '/', total);
-      setLoadProgress(progress);
-    }
-  }, []);
-
   const extractTextFromPdf = useCallback(async () => {
-    if (!file) {
-      console.log('No file to extract text from');
-      return;
-    }
+    if (!file) return;
 
     console.log('Starting text extraction from:', file.name);
     setIsExtracting(true);
@@ -106,10 +83,11 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     
     try {
       const arrayBuffer = await file.arrayBuffer();
-      console.log('File read as array buffer, size:', arrayBuffer.byteLength);
+      console.log('File converted to array buffer');
       
-      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-      console.log('PDF document loaded for text extraction, pages:', pdf.numPages);
+      const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      console.log('PDF document loaded for extraction, pages:', pdf.numPages);
       
       let fullText = '';
       
@@ -126,20 +104,18 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
         setExtractProgress(progress);
       }
       
-      console.log('Text extraction completed, total length:', fullText.length);
+      console.log('Text extraction completed, length:', fullText.length);
       setExtractedText(fullText);
       onTextExtracted?.(fullText, file.name);
     } catch (error) {
       console.error('Text extraction error:', error);
       setError(`Failed to extract text: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setExtractProgress(0);
     } finally {
       setIsExtracting(false);
     }
   }, [file, onTextExtracted]);
 
   const clearFile = useCallback(() => {
-    console.log('Clearing file');
     setFile(null);
     setNumPages(null);
     setCurrentPage(1);
@@ -214,30 +190,28 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
                 </Button>
               </div>
               
-              {/* Progress indicators */}
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Loading PDF</span>
-                    <span>{loadProgress}%</span>
-                  </div>
-                  <Progress value={loadProgress} className="h-2" />
+              {(isLoading || isExtracting) && (
+                <div className="space-y-3">
+                  {isLoading && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Loading PDF</span>
+                        <span>{loadProgress}%</span>
+                      </div>
+                      <Progress value={loadProgress} className="h-2" />
+                    </div>
+                  )}
+                  
+                  {isExtracting && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Extracting Text</span>
+                        <span>{extractProgress}%</span>
+                      </div>
+                      <Progress value={extractProgress} className="h-2" />
+                    </div>
+                  )}
                 </div>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Extracting Text</span>
-                    <span>{extractProgress}%</span>
-                  </div>
-                  <Progress value={extractProgress} className="h-2" />
-                </div>
-              </div>
-              
-              {isLoading && (
-                <Badge variant="secondary">Loading PDF...</Badge>
-              )}
-              {isExtracting && (
-                <Badge variant="secondary">Extracting text...</Badge>
               )}
             </div>
           )}
@@ -283,47 +257,31 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
           </CardHeader>
           <CardContent>
             <div className="border rounded-lg overflow-auto max-h-96 bg-gray-50">
-              {isLoading ? (
-                <div className="p-8 text-center">
-                  <div className="text-sm text-muted-foreground">Loading PDF... {loadProgress}%</div>
-                </div>
-              ) : (
-                <div key={file.name}>
-                  <Document
-                    file={file}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    onLoadError={onDocumentLoadError}
-                    onLoadProgress={onDocumentLoadProgress}
-                    loading={
-                      <div className="p-8 text-center">
-                        <div className="text-sm text-muted-foreground">Initializing PDF...</div>
-                      </div>
-                    }
-                    error={
-                      <div className="p-8 text-center text-red-600">
-                        <div>Failed to load PDF</div>
-                        <div className="text-sm mt-2">Check console for details</div>
-                      </div>
-                    }
-                    options={{
-                      cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
-                      cMapPacked: true,
-                    }}
-                  >
-                    {numPages && (
-                      <Page
-                        pageNumber={currentPage}
-                        renderTextLayer={false}
-                        renderAnnotationLayer={false}
-                        className="mx-auto"
-                        width={Math.min(600, window.innerWidth - 100)}
-                        onLoadSuccess={() => console.log(`Page ${currentPage} rendered successfully`)}
-                        onLoadError={(error) => console.error(`Page ${currentPage} load error:`, error)}
-                      />
-                    )}
-                  </Document>
-                </div>
-              )}
+              <Document
+                file={file}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                loading={
+                  <div className="p-8 text-center">
+                    <div className="text-sm text-muted-foreground">Loading PDF...</div>
+                  </div>
+                }
+                error={
+                  <div className="p-8 text-center text-red-600">
+                    <div>Failed to load PDF</div>
+                  </div>
+                }
+              >
+                {numPages && (
+                  <Page
+                    pageNumber={currentPage}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    className="mx-auto"
+                    width={Math.min(600, window.innerWidth - 100)}
+                  />
+                )}
+              </Document>
             </div>
           </CardContent>
         </Card>
