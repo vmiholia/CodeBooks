@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Upload, FileText, X, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [extractedText, setExtractedText] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +39,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       setExtractedText('');
       setCurrentPage(1);
       setIsLoading(true);
+      setIsExtracting(true);
       console.log('PDF file set successfully');
     } else {
       console.log('Invalid file type:', selectedFile.type);
@@ -50,6 +51,10 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     console.log('PDF loaded successfully with', numPages, 'pages');
     setNumPages(numPages);
     setIsLoading(false);
+    // Auto-extract text when PDF loads successfully
+    setTimeout(() => {
+      extractTextFromPdf();
+    }, 100);
   }, []);
 
   const onDocumentLoadError = useCallback((error: Error) => {
@@ -65,7 +70,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     }
 
     console.log('Starting text extraction from:', file.name);
-    setIsLoading(true);
+    setIsExtracting(true);
     setError(null);
     
     try {
@@ -94,7 +99,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
       console.error('Text extraction error:', error);
       setError(`Failed to extract text: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setIsLoading(false);
+      setIsExtracting(false);
     }
   }, [file, onTextExtracted]);
 
@@ -106,6 +111,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
     setExtractedText('');
     setError(null);
     setIsLoading(false);
+    setIsExtracting(false);
     
     // Reset the file input
     const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
@@ -144,7 +150,7 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
               <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">Upload PDF File</h3>
               <p className="text-muted-foreground mb-4">
-                Select a PDF file to view and extract text content
+                Select a PDF file to view and extract text content automatically
               </p>
               <input
                 type="file"
@@ -166,19 +172,13 @@ export const PdfReader = ({ onTextExtracted }: PdfReaderProps) => {
                   <FileText className="h-4 w-4" />
                   <span className="font-medium truncate">{file.name}</span>
                   <Badge variant="outline">{(file.size / 1024 / 1024).toFixed(2)} MB</Badge>
+                  {isExtracting && (
+                    <Badge variant="secondary">Extracting text...</Badge>
+                  )}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    onClick={extractTextFromPdf}
-                    disabled={isLoading}
-                    size="sm"
-                  >
-                    {isLoading ? 'Extracting...' : 'Extract Text'}
-                  </Button>
-                  <Button onClick={clearFile} variant="outline" size="sm">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Button onClick={clearFile} variant="outline" size="sm">
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           )}
