@@ -19,8 +19,8 @@ export const LeftNav = ({ selectedCode, onCodeSelect, searchQuery }: LeftNavProp
   );
 
   return (
-    <div className="p-4 h-full overflow-y-auto">
-      <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wide">
+    <div className="p-4 h-full overflow-y-auto bg-sidebar text-sidebar-foreground">
+      <h3 className="font-semibold text-sm text-sidebar-foreground/70 mb-4 uppercase tracking-wide">
         Medical Codes
       </h3>
       <div className="space-y-2">
@@ -29,19 +29,19 @@ export const LeftNav = ({ selectedCode, onCodeSelect, searchQuery }: LeftNavProp
             key={code.id}
             variant="ghost"
             className={cn(
-              "w-full justify-start h-auto p-3 text-left",
-              selectedCode === code.id && "bg-muted border border-border"
+              "w-full justify-start h-auto p-3 text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              selectedCode === code.id && "bg-sidebar-primary text-sidebar-primary-foreground"
             )}
             onClick={() => onCodeSelect(code.id)}
           >
             <div className="space-y-2 w-full">
               <div className="flex items-center justify-between">
                 <span className="font-mono font-semibold text-sm">{code.code}</span>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs border-sidebar-foreground/20 text-sidebar-foreground/70">
                   {code.category}
                 </Badge>
               </div>
-              <p className="text-xs text-muted-foreground text-left leading-relaxed">
+              <p className="text-xs text-sidebar-foreground/60 text-left leading-relaxed">
                 {code.title}
               </p>
             </div>
@@ -50,7 +50,7 @@ export const LeftNav = ({ selectedCode, onCodeSelect, searchQuery }: LeftNavProp
       </div>
       
       {filteredCodes.length === 0 && searchQuery && (
-        <div className="text-center py-8 text-muted-foreground text-sm">
+        <div className="text-center py-8 text-sidebar-foreground/60 text-sm">
           No codes found matching "{searchQuery}"
         </div>
       )}

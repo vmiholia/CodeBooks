@@ -15,7 +15,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* TopBar */}
-      <div className="border-b bg-white sticky top-0 z-50">
+      <div className="border-b bg-white sticky top-0 z-50 shadow-sm">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center space-x-4">
             <img 
@@ -29,17 +29,17 @@ const Index = () => {
                 placeholder="Search medical codes, procedures..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 border-gray-200 focus:border-primary focus:ring-primary"
               />
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-primary">
               <HelpCircle className="h-4 w-4" />
             </Button>
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />
-              <AvatarFallback>
+              <AvatarFallback className="bg-primary text-primary-foreground">
                 <User className="h-4 w-4" />
               </AvatarFallback>
             </Avatar>
@@ -49,8 +49,8 @@ const Index = () => {
 
       {/* Main Grid Layout */}
       <div className="flex">
-        {/* Left Navigation - 240px */}
-        <div className="w-60 border-r bg-muted/30">
+        {/* Left Navigation - 240px with dark sidebar styling */}
+        <div className="w-60 bg-sidebar border-r border-sidebar-border">
           <LeftNav 
             selectedCode={selectedCode} 
             onCodeSelect={setSelectedCode}
@@ -59,7 +59,7 @@ const Index = () => {
         </div>
 
         {/* Main Content - 1fr */}
-        <div className="flex-1">
+        <div className="flex-1 bg-gray-50">
           {selectedCode ? (
             <CodeDetailPage codeId={selectedCode} />
           ) : (
@@ -70,7 +70,7 @@ const Index = () => {
         </div>
 
         {/* Right Table of Contents - 260px */}
-        <div className="w-65 border-l bg-muted/30">
+        <div className="w-65 border-l bg-white">
           <RightToc />
         </div>
       </div>
