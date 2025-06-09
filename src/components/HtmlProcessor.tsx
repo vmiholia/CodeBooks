@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,10 +23,18 @@ export const HtmlProcessor: React.FC<HtmlProcessorProps> = ({ onTextExtracted })
   }, []);
 
   const convertGithubUrl = (githubUrl: string) => {
-    // Convert GitHub blob URL to raw URL
-    return githubUrl
+    // Convert GitHub blob URL to raw URL and properly encode the path
+    const rawUrl = githubUrl
       .replace('github.com', 'raw.githubusercontent.com')
       .replace('/blob/', '/');
+    
+    // Split the URL to encode only the filename part
+    const urlParts = rawUrl.split('/');
+    const filename = urlParts[urlParts.length - 1];
+    const encodedFilename = encodeURIComponent(filename);
+    urlParts[urlParts.length - 1] = encodedFilename;
+    
+    return urlParts.join('/');
   };
 
   const extractTextFromHtml = (html: string) => {
