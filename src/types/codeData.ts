@@ -28,7 +28,7 @@ export const CODE_GROUPS: CodeGroup[] = [
 ];
 
 export const CODE_DATA_ELEMENTS: CodeDataElement[] = [
-  // Description & Usage (GroupID: 1) - Removed CPT Code as it's shown in header
+  // Description & Usage (GroupID: 1)
   { GroupID: 1, ElementID: 2, ElementName: "Official CPT Descriptor", Priority: 1, Definition: "The official descriptor as published in the CPT codebook" },
   { GroupID: 1, ElementID: 3, ElementName: "Lay Description", Priority: 2, Definition: "Patient-friendly explanation of the procedure" },
   { GroupID: 1, ElementID: 4, ElementName: "Clinical Vignette", Priority: 3, Definition: "Example clinical scenario demonstrating appropriate use" },
@@ -64,9 +64,9 @@ export const CODE_DATA_ELEMENTS: CodeDataElement[] = [
 ];
 
 export const SAMPLE_CODES: CodeDetail[] = [
+  { id: "93005", code: "93005", title: "Electrocardiogram, routine ECG with at least 12 leads; tracing only, without interpretation and report", category: "Cardiology" },
   { id: "29888", code: "29888", title: "Arthroscopically aided anterior cruciate ligament repair/augmentation or reconstruction", category: "Musculoskeletal" },
   { id: "99213", code: "99213", title: "Office or other outpatient visit for evaluation and management", category: "E/M" },
   { id: "45378", code: "45378", title: "Colonoscopy, flexible; diagnostic", category: "Gastroenterology" },
-  { id: "70553", code: "70553", title: "Magnetic resonance imaging, brain", category: "Radiology" },
-  { id: "93306", code: "93306", title: "Echocardiography, transthoracic", category: "Cardiology" }
+  { id: "70553", code: "70553", title: "Magnetic resonance imaging, brain", category: "Radiology" }
 ];
