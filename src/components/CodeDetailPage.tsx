@@ -106,12 +106,12 @@ export const CodeDetailPage = ({ codeId, onActiveTabChange, onElementNavigate }:
       {/* Dynamic Tabs */}
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
         <div className="overflow-x-auto">
-          <TabsList className="grid w-full grid-cols-5 mb-8 bg-gray-100 min-w-max">
+          <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground mb-8 min-w-max">
             {groups.map((group) => (
               <TabsTrigger 
                 key={group} 
                 value={group}
-                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap px-4"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 {group}
               </TabsTrigger>
