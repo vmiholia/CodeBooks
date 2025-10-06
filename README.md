@@ -1,73 +1,68 @@
-# Welcome to your Lovable project
+# RapidClaims Codebook
 
-## Project info
+RapidClaims Codebook is an interactive reference experience for medical billing and coding teams. It centralizes CPT, ICD, and related procedure information in a polished UI that combines faceted search, expandable navigation, and rich detail panes so reviewers can move through documentation with confidence.
 
-**URL**: https://lovable.dev/projects/eca14400-68b8-4103-83d8-86c69c3c6264
+## Features
+- Unified landing page that surfaces recently viewed codes, featured categories, and saved favorites for fast orientation.
+- Context-aware search with category filters (CPT, ICD-10-CM, HCPCS, Procedures, Articles) and inline result counts.
+- Hierarchical code explorer with expand/collapse controls and a synchronized table of contents for detailed reading.
+- Rich code detail view displaying clinical summaries, billing guidance, payer policies, documentation checklists, and FAQs.
+- Embedded RapidClaims Chatbot for quick Q&A support directly inside the workspace.
 
-## How can I edit this code?
+## Screenshots
+![RapidClaims Codebook home screen](public/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png)
 
-There are several ways of editing your application.
+> Tip: Replace or add images in `public/lovable-uploads/` to keep the visuals current.
 
-**Use Lovable**
+## Getting Started
+### Prerequisites
+- Node.js 18+
+- npm (bundled with Node.js)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/eca14400-68b8-4103-83d8-86c69c3c6264) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Installation
+```bash
+git clone https://github.com/vmiholia/codebook-tab-builder.git
+cd codebook-tab-builder
+npm install
 ```
 
-**Edit a file directly in GitHub**
+### Development
+```bash
+npm run dev
+```
+This starts the Vite development server (defaults to `http://127.0.0.1:5173`).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build & Preview
+```bash
+npm run build   # Create a production build in dist/
+npm run preview # Serve the production build locally
+```
 
-**Use GitHub Codespaces**
+### Linting
+```bash
+npm run lint
+```
+Runs ESLint across the project using the shared configuration in `eslint.config.js`.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
+- `src/pages/Index.tsx` – Landing page that orchestrates global search, filters, and navigation.
+- `src/components/CodeDetailPage.tsx` – Primary detail view for procedure information, payor guidance, and documentation assets.
+- `src/components/NavigationOverlay.tsx` – Overlay navigation for quickly jumping between grouped codes.
+- `src/components/RCChatBot.tsx` – RapidClaims support assistant embedded as a floating widget.
+- `src/data/` – Static seed data powering the demo experience (e.g., `cpt93005.ts`).
+- `public/` – Static assets including favicon, exported reference documents, and UI imagery.
 
-## What technologies are used for this project?
+## Tech Stack
+- React 18 with TypeScript and Vite
+- shadcn/ui and Radix primitives for accessible UI components
+- Tailwind CSS for styling with `tailwind-merge` and `clsx`
+- TanStack Query for lightweight client-side state and data fetching patterns
 
-This project is built with:
+## Contributing
+1. Fork the repository and create a feature branch.
+2. Make your updates and add tests or screenshots as appropriate.
+3. Run `npm run lint` and `npm run build` to verify changes.
+4. Submit a pull request describing the enhancement or fix.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/eca14400-68b8-4103-83d8-86c69c3c6264) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## License
+This project is proprietary to RapidClaims. Please contact the repository owner for usage questions or collaboration requests.
