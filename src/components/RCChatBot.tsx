@@ -30,7 +30,7 @@ export const RCChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hi! I'm RC, your RapidClaims assistant. I can help you find information about medical codes, procedures, and documentation requirements. What can I help you with today?",
+      text: "Hi! I'm CB, your CodeBooks assistant. I can help you find information about medical codes, procedures, and documentation requirements. What can I help you with today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -126,14 +126,14 @@ export const RCChatBot = () => {
             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src="/rapidclaims-logo.svg" />
+                    <AvatarImage src="/codebooks-logo.svg" />
                     <AvatarFallback className="bg-white text-blue-600 font-bold text-sm">
-                      RC
+                      CB
                     </AvatarFallback>
                   </Avatar>
                 <div>
-                  <h3 className="font-semibold text-sm">Ask RC</h3>
-                  <p className="text-xs text-blue-100">RapidClaims Assistant</p>
+                  <h3 className="font-semibold text-sm">Ask CodeBooks</h3>
+                  <p className="text-xs text-blue-100">CodeBooks Assistant</p>
                 </div>
               </div>
               <Button
@@ -160,9 +160,9 @@ export const RCChatBot = () => {
                   >
                     {message.sender === 'bot' && (
                       <Avatar className="w-6 h-6">
-                        <AvatarImage src="/rapidclaims-logo.svg" />
+                        <AvatarImage src="/codebooks-logo.svg" />
                         <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">
-                          RC
+                          CB
                         </AvatarFallback>
                       </Avatar>
                     )}
@@ -178,7 +178,7 @@ export const RCChatBot = () => {
                       {message.isLoading ? (
                         <div className="flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>RC is typing...</span>
+                          <span>CB is typing...</span>
                         </div>
                       ) : (
                         <div className="whitespace-pre-wrap">{message.text}</div>
@@ -198,15 +198,15 @@ export const RCChatBot = () => {
                 {isTyping && (
                   <div className="flex gap-3 justify-start">
                     <Avatar className="w-6 h-6">
-                      <AvatarImage src="/rapidclaims-logo.svg" />
+                      <AvatarImage src="/codebooks-logo.svg" />
                       <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">
-                        RC
+                        CB
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-3 py-2 text-sm">
                       <div className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>RC is typing...</span>
+                        <span>CB is typing...</span>
                       </div>
                     </div>
                   </div>

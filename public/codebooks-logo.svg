@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>CodeBooks Logo</title>
+  <desc>Interlocking book shapes forming the letters C and B</desc>
+  <defs>
+    <linearGradient id="codebooksGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#22d3ee" />
+    </linearGradient>
+    <linearGradient id="codebooksAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#f97316" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="#0f172a" />
+  <path d="M34 32h34c18 0 30 12 30 32s-12 32-30 32H34z" fill="none" stroke="url(#codebooksGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M60 92h28c14 0 22-8 22-20s-8-20-22-20H52" fill="none" stroke="url(#codebooksAccent)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M36 40h16v16H36z" fill="#22d3ee" opacity="0.3" />
+  <path d="M76 72h16v16H76z" fill="#facc15" opacity="0.3" />
+</svg>

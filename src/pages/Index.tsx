@@ -332,7 +332,7 @@ const Index = () => {
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png" 
-              alt="RapidClaims CodeBooks" 
+              alt="CodeBooks" 
               className="h-8 cursor-pointer"
               onClick={() => {
                 setSelectedCode(null);

@@ -1,16 +1,16 @@
-# RapidClaims Codebook
+# CodeBooks
 
-RapidClaims Codebook is an interactive reference experience for medical billing and coding teams. It centralizes CPT, ICD, and related procedure information in a polished UI that combines faceted search, expandable navigation, and rich detail panes so reviewers can move through documentation with confidence.
+CodeBooks is an interactive reference experience for medical billing and coding teams. It centralizes CPT, ICD, and related procedure information in a polished UI that combines faceted search, expandable navigation, and rich detail panes so reviewers can move through documentation with confidence.
 
 ## Features
 - Unified landing page that surfaces recently viewed codes, featured categories, and saved favorites for fast orientation.
 - Context-aware search with category filters (CPT, ICD-10-CM, HCPCS, Procedures, Articles) and inline result counts.
 - Hierarchical code explorer with expand/collapse controls and a synchronized table of contents for detailed reading.
 - Rich code detail view displaying clinical summaries, billing guidance, payer policies, documentation checklists, and FAQs.
-- Embedded RapidClaims Chatbot for quick Q&A support directly inside the workspace.
+- Embedded CodeBooks Chatbot for quick Q&A support directly inside the workspace.
 
 ## Screenshots
-![RapidClaims Codebook home screen](public/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png)
+![CodeBooks home screen](public/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png)
 
 > Tip: Replace or add images in `public/lovable-uploads/` to keep the visuals current.
 
@@ -48,7 +48,7 @@ Runs ESLint across the project using the shared configuration in `eslint.config.
 - `src/pages/Index.tsx` – Landing page that orchestrates global search, filters, and navigation.
 - `src/components/CodeDetailPage.tsx` – Primary detail view for procedure information, payor guidance, and documentation assets.
 - `src/components/NavigationOverlay.tsx` – Overlay navigation for quickly jumping between grouped codes.
-- `src/components/RCChatBot.tsx` – RapidClaims support assistant embedded as a floating widget.
+- `src/components/RCChatBot.tsx` – CodeBooks support assistant embedded as a floating widget.
 - `src/data/` – Static seed data powering the demo experience (e.g., `cpt93005.ts`).
 - `public/` – Static assets including favicon, exported reference documents, and UI imagery.
 
@@ -65,4 +65,4 @@ Runs ESLint across the project using the shared configuration in `eslint.config.
 4. Submit a pull request describing the enhancement or fix.
 
 ## License
-This project is proprietary to RapidClaims. Please contact the repository owner for usage questions or collaboration requests.
+This project is proprietary to CodeBooks. Please contact the repository owner for usage questions or collaboration requests.
