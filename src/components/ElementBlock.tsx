@@ -49,6 +49,83 @@ interface MockContentGlobalPeriod {
   data: GlobalPeriodData;
 }
 
+interface MockContentRichContent {
+  type: "rich-content";
+  data: {
+    title: string;
+    content?: string;
+    copyright?: string;
+    sections?: Array<{
+      title: string;
+      content?: string;
+      note?: string;
+      codes?: Array<{
+        code: string;
+        description: string;
+      }>;
+      references?: Array<{
+        code: string;
+        context: string;
+      }>;
+    }>;
+  };
+}
+
+interface MockContentCrosswalkTable {
+  type: "crosswalk-table";
+  data: {
+    title: string;
+    subtitle: string;
+    categories: Array<{
+      category: string;
+      codes: Array<{
+        code: string;
+        description: string;
+        status: string;
+      }>;
+    }>;
+  };
+}
+
+interface MockContentArticlesList {
+  type: "articles-list";
+  data: {
+    title: string;
+    description: string;
+    accessNote: string;
+    articles: Array<{
+      year: string;
+      title: string;
+      month: string;
+    }>;
+  };
+}
+
+interface MockContentCCINcci {
+  type: "cci-ncci";
+  data: {
+    title: string;
+    mue: {
+      title: string;
+      unitsOfService: string;
+      adjudicationIndicator: string;
+      description: string;
+      rationale: string;
+      note: string;
+    };
+    ptpEdits: {
+      title: string;
+      description: string;
+      column1Code: string;
+      column1Description: string;
+      column2Codes: Array<{
+        code: string;
+        modifier: string;
+      }>;
+    };
+  };
+}
+
 interface MockContentMedicareFees {
   type: "medicare-fees";
   data: {
@@ -196,7 +273,7 @@ interface MockContentGeneral {
   data: string;
 }
 
-type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentMedicareFees | MockContentRVUBreakdown | MockContentGeneral;
+type MockContent = MockContentModifiers | MockContentHistory | MockContentGlobalPeriod | MockContentMedicareFees | MockContentRVUBreakdown | MockContentGeneral | MockContentRichContent | MockContentCrosswalkTable | MockContentArticlesList | MockContentCCINcci;
 
 export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
   const [showAllModifiers, setShowAllModifiers] = useState(false);
@@ -210,158 +287,61 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
     }));
   };
 
-  // Mock data for different element types
+  // Mock data for different element types - UPDATED WITH REAL CPT 93005 DATA
   const getMockContent = (elementName: string): MockContent => {
     switch (elementName) {
-      case "CCI Edits & Modifier Indicator":
+      case "Official CPT Descriptor":
         return {
-          type: "modifiers",
-          data: [
-            {
-              percentage: "56.34%",
-              modifier: "59",
-              title: "Distinct procedural service",
-              description: "Under certain circumstances, it may be necessary to indicate that a procedure or service was distinct or independent from other non-e/m services performed on the same day. Modifier 59 is used to identify procedures/services, other than e/m services, that are not normally reported together, but are appropriate under the circumstances. Documentation must support a different session, different procedure or surgery, different site or organ system, separate incision/excision, separate lesion, or separate injury (or area of injury in extensive injuries) not ordinarily encountered or performed on the same day by the same individual. However, when another already established modifier is appropriate it should be used rather than modifier 59. Only if no more descriptive modifier is available, and the use of modifier 59 best explains the circumstances, should modifier 59 be used. Note: modifier 59 should not be appended to an e/m service. To report a separate and distinct e/m service with a non-e/m service performed on the same date, see modifier 25."
-            },
-            {
-              percentage: "21.43%",
-              modifier: "51",
-              title: "Multiple procedures",
-              description: "When multiple procedures, other than e/m services, physical medicine and rehabilitation services or provision of supplies (eg, vaccines), are performed at the same session by the same individual, the primary procedure or service may be reported as listed. The additional procedure(s) or service(s) may be identified by appending modifier 51 to the additional procedure or service code(s). Note: this modifier should not be appended to designated \"add-on\" codes (see appendix d)."
-            },
-            {
-              percentage: "7.16%",
-              modifier: "XU",
-              title: "Unusual non-overlapping service",
-              description: "The use of a service that is distinct because it does not overlap usual components of the main service"
-            },
-            {
-              percentage: "5.50%",
-              modifier: "GW",
-              title: "Service not related to the hospice patient's terminal condition",
-              description: ""
-            },
-            {
-              percentage: "2.33%",
-              modifier: "GA",
-              title: "Waiver of liability statement issued as required by payer policy, individual case",
-              description: ""
-            },
-            {
-              percentage: "1.85%",
-              modifier: "GC",
-              title: "This service has been performed in part by a resident under the direction of a teaching physician",
-              description: ""
-            },
-            {
-              percentage: "1.37%",
-              modifier: "GZ",
-              title: "Item or service expected to be denied as not reasonable and necessary",
-              description: ""
-            },
-            {
-              percentage: "0.95%",
-              modifier: "CR",
-              title: "Catastrophe/disaster related",
-              description: ""
-            },
-            {
-              percentage: "0.72%",
-              modifier: "AQ",
-              title: "Physician providing a service in an unlisted health professional shortage area (hpsa)",
-              description: ""
-            },
-            {
-              percentage: "0.61%",
-              modifier: "76",
-              title: "Repeat procedure or service by same physician or other qualified health care professional",
-              description: "It may be necessary to indicate that a procedure or service was repeated by the same physician or other qualified health care professional subsequent to the original procedure or service. This circumstance may be reported by adding modifier 76 to the repeated procedure or service. Note: this modifier should not be appended to an e/m service."
-            },
-            {
-              percentage: "0.44%",
-              modifier: "XE",
-              title: "Separate encounter",
-              description: "A service that is distinct because it occurred during a separate encounter"
-            },
-            {
-              percentage: "0.35%",
-              modifier: "XS",
-              title: "Separate structure",
-              description: "A service that is distinct because it was performed on a separate organ/structure"
-            },
-            {
-              percentage: "0.28%",
-              modifier: "Q1",
-              title: "Routine clinical service provided in a clinical research study that is in an approved clinical research study",
-              description: ""
-            },
-            {
-              percentage: "0.23%",
-              modifier: "PD",
-              title: "Diagnostic or related non diagnostic item or service provided in a wholly owned or operated entity to a patient who is admitted as an inpatient within 3 days",
-              description: ""
-            },
-            {
-              percentage: "0.21%",
-              modifier: "GY",
-              title: "Item or service statutorily excluded, does not meet the definition of any medicare benefit or, for non-medicare insurers, is not a contract benefit",
-              description: ""
-            }
-          ]
+          type: "content",
+          data: "93005 - Electrocardiogram, routine ECG with at least 12 leads; tracing only, without interpretation and report"
         };
 
-      case "Code History & Valuation":
+      case "Lay Description":
         return {
-          type: "history",
-          data: [
-            {
-              date: "2024-01-01",
-              action: "RVU Change",
-              notes: "Work RVU: 13.27 → 13.28 (+0.01), Non-Facility PE: 7.04 → 7.05 (+0.01), Facility PE: 1.50 → 1.51 (+0.01)"
-            },
-            {
-              date: "2023-01-01", 
-              action: "RVU Change",
-              notes: "Work RVU: 13.25 → 13.27 (+0.02), Non-Facility PE: 7.02 → 7.04 (+0.02)"
-            },
-            {
-              date: "2022-01-01",
-              action: "RVU Change", 
-              notes: "Work RVU: 13.23 → 13.25 (+0.02), Facility PE: 1.48 → 1.50 (+0.02)"
-            },
-            {
-              date: "2021-01-01",
-              action: "RVU Change",
-              notes: "Work RVU: 13.20 → 13.23 (+0.03), Non-Facility PE: 6.98 → 7.02 (+0.04)"
-            },
-            {
-              date: "2020-01-01",
-              action: "Code Review",
-              notes: "Comprehensive review of procedure components and relative values"
-            },
-            {
-              date: "2011-01-01",
-              action: "Changed",
-              notes: "Short description changed."
-            },
-            {
-              date: "Pre-1990",
-              action: "Added",
-              notes: "Code added."
-            }
-          ]
-        };
-
-      case "Global Period":
-        return {
-          type: "global-period",
+          type: "rich-content",
           data: {
-            code: "090",
-            title: "Major Surgery",
-            description: "Medicare includes major surgery with a 1-day preoperative period and 90-day postoperative period included in the fee schedule payment amount.",
-            preoperative: "8%",
-            intraoperative: "83%",
-            postoperative: "9%"
+            title: "Common Language Description",
+            content: `An electrocardiogram (ECG) is used to evaluate the electrical activity of the heart. The test is performed with the patient lying prone on the exam table. Small plastic patches are attached at specific locations on the chest, abdomen, arms, and/or legs. Leads (wires) from the ECG tracing device are then attached to the patches. A tracing is obtained of the electrical signals from the heart. 
+
+Electrical activity begins in the sinoatrial node, which generates an electrical stimulus at regular intervals, usually 60 to 100 times per minute. This stimulus travels through the conduction pathways to the sinoatrial node causing the atria to contract. The stimulus then travels along the bundle of His, which divides into right and left pathways providing electrical stimulation of the ventricles causing them to contract. Each contraction of the ventricles represents one heart beat. 
+
+The ECG tracing includes the following elements: P wave, QRS complex, ST segment, and T wave. The P wave, a small upward notch in the tracing, indicates electrical stimulation of the atria. This is followed by the QRS complex, which indicates the ventricles are electrically stimulated to contract. The short flat ST segment follows and indicates the time between the end of the ventricular contraction and the T wave. The T wave represents the recovery period of the ventricles. 
+
+The physician reviews, interprets, and provides a written report of the ECG recording taking care to note any abnormalities. Use 93000 to report the complete procedure, including ECG tracing with physician review, interpretation, and report; use 93005 to report the tracing only; and use 93010 to report physician interpretation and written report only.`,
+            copyright: "©2015-2025 DecisionHealth - Plain English Descriptions - All Rights Reserved"
+          }
+        };
+
+      case "Related Procedure Codes":
+        return {
+          type: "rich-content",
+          data: {
+            title: "Related CPT CodeBook Guidelines & Related Codes",
+            sections: [
+              {
+                title: "CPT CodeBook Guidelines:",
+                content: "For ECG monitoring, use 99418",
+                note: "Do not report 93000, 93005, 93010 in conjunction with 0525T-0532T (intracardiac ischemia monitoring system codes)"
+              },
+              {
+                title: "Related ECG Codes:",
+                codes: [
+                  { code: "93000", description: "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report" },
+                  { code: "93005", description: "Electrocardiogram, routine ECG with at least 12 leads; tracing only, without interpretation and report" },
+                  { code: "93010", description: "Electrocardiogram, routine ECG with at least 12 leads; interpretation and report only" },
+                  { code: "93040", description: "Rhythm ECG, 1-3 leads; with interpretation and report" },
+                  { code: "93041", description: "Rhythm ECG, 1-3 leads; tracing only without interpretation and report" },
+                  { code: "93042", description: "Rhythm ECG, 1-3 leads; interpretation and report only" }
+                ]
+              },
+              {
+                title: "Cross-Referenced From:",
+                references: [
+                  { code: "94621", context: "Cardiopulmonary exercise testing - do not report with ECG codes during same session" },
+                  { code: "0180T", context: "64+ lead ECG codes (deleted) - use 93799 for unlisted cardiovascular service" }
+                ]
+              }
+            ]
           }
         };
 
@@ -370,12 +350,8 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
           type: "medicare-fees",
           data: {
             title: "Calculated for DE (19801) - Novitas Solutions, Inc.",
-            note: "* Note: Medicare may or may NOT reimburse you for this code. The fees provided below are based on values established by CMS/Medicare. Please check with your local Medicare contact on whether this code is eligible for reimbursement.",
+            note: "* Note: Medicare may or MAY NOT reimburse you for this code. The fees provided below are based on values established by CMS/Medicare. Please check with your local Medicare contact on whether this code is eligible for reimbursement.",
             sections: [
-              {
-                name: "Fees",
-                type: "collapsible"
-              },
               {
                 name: "Facility (Hospital, etc.)",
                 type: "collapsible",
@@ -384,16 +360,9 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                   table: [
                     {
                       modifier: "(none)",
-                      medicareAllowed: "$706.46",
-                      percentage150: "$1,059.69",
-                      percentage200: "$1,412.93",
-                      myFee: "(enter)"
-                    },
-                    {
-                      modifier: "(MPPR)",
-                      medicareAllowed: "$353.55",
-                      percentage150: "$530.32",
-                      percentage200: "$707.09",
+                      medicareAllowed: "$6.08",
+                      percentage150: "$9.12",
+                      percentage200: "$12.17",
                       myFee: "(enter)"
                     }
                   ],
@@ -402,13 +371,7 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                     table: [
                       {
                         modifier: "(none)",
-                        allowed: "$706.46",
-                        medicare80: "$##.##",
-                        patientPays: "$##.##"
-                      },
-                      {
-                        modifier: "(MPPR)",
-                        allowed: "$353.55",
+                        allowed: "$6.08",
                         medicare80: "$##.##",
                         patientPays: "$##.##"
                       }
@@ -419,13 +382,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                     table: [
                       {
                         modifier: "(none)",
-                        allowed: "$##.##",
-                        medicare80: "$##.##",
-                        patientPays: "$##.##",
-                        limitingCharge: "$##.##"
-                      },
-                      {
-                        modifier: "(MPPR)",
                         allowed: "$##.##",
                         medicare80: "$##.##",
                         patientPays: "$##.##",
@@ -442,13 +398,6 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                         medicare80: "$##.##",
                         patientPays: "$##.##",
                         limitingCharge: "$##.##"
-                      },
-                      {
-                        modifier: "(MPPR)",
-                        allowed: "$##.##",
-                        medicare80: "$##.##",
-                        patientPays: "$##.##",
-                        limitingCharge: "$##.##"
                       }
                     ]
                   }
@@ -456,289 +405,249 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
               },
               {
                 name: "Non-Facility (Office, etc.)",
-                type: "collapsible"
-              },
-              {
-                name: "APC Fee Information",
-                type: "collapsible"
-              },
-              {
-                name: "Fee Schedules",
-                type: "collapsible"
-              },
-              {
-                name: "UCR Fees (UCR, WC, Medicare)",
-                type: "collapsible"
-              }
-            ]
-          }
-        };
-
-      case "RVU Breakdown":
-        return {
-          type: "rvu-breakdown",
-          data: {
-            title: "Calculated for DE (19801) - Novitas Solutions, Inc.",
-            note: "* Note: Medicare may or may NOT reimburse you for this code. The fees provided below are based on values established by CMS/Medicare. Please check with your local Medicare contact on whether this code is eligible for reimbursement.",
-            sections: [
-              {
-                name: "Facility 21.840 (Hospital, etc.)",
-                total: "21.840",
                 type: "collapsible",
                 content: {
-                  rvuComponents: {
-                    title: "RVU Components (by modifier)",
+                  title: "Medicare vs. My Fee Evaluation",
+                  table: [
+                    {
+                      modifier: "(none)",
+                      medicareAllowed: "$6.08",
+                      percentage150: "$9.12",
+                      percentage200: "$12.17",
+                      myFee: "(enter)"
+                    }
+                  ],
+                  participatingSection: {
+                    title: "Medicare Participating - Assignment Accepted (Mandatory)",
                     table: [
                       {
                         modifier: "(none)",
-                        work: "13.278",
-                        practiceExpense: "7.053",
-                        malpracticeExpense: "1.509",
-                        total: "21.840"
-                      },
-                      {
-                        modifier: "(MPPR)",
-                        work: "6.639",
-                        practiceExpense: "3.532",
-                        malpracticeExpense: "0.759",
-                        total: "10.930"
+                        allowed: "$6.08",
+                        medicare80: "$4.87",
+                        patientPays: "$1.22"
                       }
-                    ],
-                    note: "Calculated fee values are available.\n\nAccess to this feature is available in the following products:\n• Find-A-Code Facility Base/Plus/Complete"
+                    ]
                   },
-                  practitionerWork: {
-                    title: "Practitioner Work Component: 13.278",
-                    laborSection: {
-                      title: "Practitioner Labor",
-                      table: {
-                        preService: "##",
-                        intraService: "##", 
-                        postService: "##",
-                        totalTime: "## min"
-                      },
-                      note: "* Total Time may be greater than the displayed components."
-                    },
-                    workRVUComponents: {
-                      title: "Work RVU Components (by modifier)",
-                      table: [
-                        {
-                          modifier: "(none)",
-                          nationalUnadjustedWorkRVU: "##.##",
-                          workGPCI: "##.##",
-                          adjustedWorkRVU: "13.278"
-                        },
-                        {
-                          modifier: "(MPPR)",
-                          nationalUnadjustedWorkRVU: "##.##",
-                          workGPCI: "##.##",
-                          adjustedWorkRVU: "6.639"
-                        }
-                      ]
-                    }
+                  nonParticipatingAccepted: {
+                    title: "Medicare Non-Participating - Assignment Accepted (Check To Doctor)",
+                    table: [
+                      {
+                        modifier: "(none)",
+                        allowed: "$5.78",
+                        medicare80: "$4.62",
+                        patientPays: "$1.16",
+                        limitingCharge: "$6.65"
+                      }
+                    ]
                   },
-                  practiceExpense: {
-                    title: "Practice Expense: 7.053",
-                    clinicalLabor: {
-                      title: "Clinical Labor - Direct Expense",
-                      table: [
-                        {
-                          staff: "RN/LPN/MTA",
-                          staffRate: "$0.54 / min",
-                          preTime: "## min",
-                          intraTime: "## min",
-                          postTime: "## min",
-                          totalTime: "## min"
-                        }
-                      ]
-                    },
-                    equipment: {
-                      title: "Equipment - Direct Expense",
-                      table: [
-                        {
-                          item: "table, power",
-                          purchasePrice: "$##.##",
-                          expectedLife: "## years",
-                          totalTime: "## min"
-                        }
-                      ]
-                    },
-                    supplies: {
-                      title: "Supplies - Direct Expense",
-                      table: [
-                        {
-                          item: "pack, minimum multi-specialty visit",
-                          unitPrice: "$##.##",
-                          quantity: "##",
-                          unit: "pack",
-                          amount: "$##.##"
-                        },
-                        {
-                          item: "underpad 2ft x 3ft (Chux)",
-                          unitPrice: "$##.##",
-                          quantity: "##",
-                          unit: "item",
-                          amount: "$##.##"
-                        },
-                        {
-                          item: "syringe 10-12ml",
-                          unitPrice: "$##.##",
-                          quantity: "##",
-                          unit: "item",
-                          amount: "$##.##"
-                        },
-                        {
-                          item: "syringe 50-60ml",
-                          unitPrice: "$##.##",
-                          quantity: "##",
-                          unit: "item",
-                          amount: "$##.##"
-                        },
-                        {
-                          item: "sodium chloride 0.9% irrigation (500-1000ml uou)",
-                          unitPrice: "$##.##",
-                          quantity: "##",
-                          unit: "item",
-                          amount: "$##.##"
-                        },
-                        {
-                          item: "cup-container, sterile, graduated 1000ml",
-                          unitPrice: "$##.##",
-                          quantity: "##",
-                          unit: "item",
-                          amount: "$##.##"
-                        }
-                      ]
-                    },
-                    indirectNote: "Indirect Expenses (clerical,overhead, and other) are also included in the practice expense.",
-                    peRVUComponents: {
-                      title: "PE RVU Components (by modifier)",
-                      table: [
-                        {
-                          modifier: "(none)",
-                          nationalUnadjustedPERVU: "##.##",
-                          peGPCI: "##.##",
-                          adjustedPERVU: "7.053"
-                        },
-                        {
-                          modifier: "(MPPR)",
-                          nationalUnadjustedPERVU: "##.##",
-                          peGPCI: "##.##",
-                          adjustedPERVU: "3.532"
-                        }
-                      ]
-                    }
+                  nonParticipatingNotAccepted: {
+                    title: "Medicare Non-Participating - Assignment NOT Accepted (Check To Patient)",
+                    table: [
+                      {
+                        modifier: "(none)",
+                        allowed: "$5.78",
+                        medicare80: "$4.62",
+                        patientPays: "$6.65",
+                        limitingCharge: "$6.65"
+                      }
+                    ]
                   }
                 }
-              },
-              {
-                name: "Non-Facility 21.840 (Office, etc.)",
-                total: "21.840",
-                type: "collapsible"
-              },
-              {
-                name: "UCR-Based RVUs",
-                total: "",
-                type: "collapsible"
               }
             ]
           }
         };
 
-      case "Official CPT Descriptor":
+      case "CCI Edits & Modifier Indicator":
         return {
-          type: "content",
-          data: "This is the official CPT descriptor."
+          type: "cci-ncci",
+          data: {
+            title: "NCCI Edits (PTP, MUE) - Facility",
+            mue: {
+              title: "NCCI MUE (Medically Unlikely Edit)",
+              unitsOfService: "5",
+              adjudicationIndicator: "3 Date of Service Edit: Clinical",
+              description: "An MUE is the maximum units of service (UOS) reported for a HCPCS/CPT code on the vast majority of appropriately reported claims by the same provider/supplier for the same beneficiary on the same date of service. Not all HCPCS/CPT codes have an MUE.",
+              rationale: "Clinical: Data",
+              note: "Additional units are unlikely, an appeal will be necessary."
+            },
+            ptpEdits: {
+              title: "NCCI PTP Edits (Procedure to Procedure)",
+              description: "When codes are submitted together and an edit exists, Column 1 codes are eligible for payment, and Column 2 codes are not — unless an NCCI-associated modifier is both appropriate (depends on the situation) and allowed. Code pairs that are allowed with a modifier are indicated by 1. Pairs with 0 cannot be submitted together regardless of modifiers.",
+              column1Code: "93005",
+              column1Description: "93005 is a Column 1 code (reimbursable) in the following pairs:",
+              column2Codes: [
+                { code: "0543T", modifier: "1" },
+                { code: "0544T", modifier: "1" },
+                { code: "0545T", modifier: "1" },
+                { code: "0573T", modifier: "1" },
+                { code: "0574T", modifier: "1" },
+                { code: "0580T", modifier: "1" },
+                { code: "20561", modifier: "1" },
+                { code: "20700", modifier: "1" },
+                { code: "20701", modifier: "1" },
+                { code: "21603", modifier: "1" },
+                { code: "33017", modifier: "1" },
+                { code: "33018", modifier: "1" },
+                { code: "34718", modifier: "1" },
+                { code: "35702", modifier: "1" },
+                { code: "93041", modifier: "1" },
+                { code: "93042", modifier: "1" }
+              ]
+            }
+          }
         };
-      case "Lay Description":
-        return {
-          type: "content",
-          data: "This is a patient-friendly explanation of the procedure."
-        };
-      case "Clinical Vignette":
-        return {
-          type: "content",
-          data: "This is an example clinical scenario demonstrating appropriate use."
-        };
-      case "Related Procedure Codes":
-        return {
-          type: "content",
-          data: "These are similar or commonly bundled procedures."
-        };
-      case "Inpatient-Only (IPO) Flag":
-        return {
-          type: "content",
-          data: "This indicates if the procedure must be performed in an inpatient setting."
-        };
-      case "LCD & NCD Coverage Info":
-        return {
-          type: "content",
-          data: "This is local and national coverage determination information."
-        };
-      case "Documentation Tips":
-        return {
-          type: "content",
-          data: "These are best practices for documentation requirements."
-        };
-      case "MUE (Medically Unlikely Edit)":
-        return {
-          type: "content",
-          data: "This is the maximum units that can be billed per date of service."
-        };
-      case "ASC Payment Indicator":
-        return {
-          type: "content",
-          data: "This is the Ambulatory Surgery Center payment classification."
-        };
-      case "UCR / WC Benchmark Fees":
-        return {
-          type: "content",
-          data: "These are Usual, Customary, and Reasonable / Workers' Compensation fee benchmarks."
-        };
-      case "Custom Fee Modeling":
-        return {
-          type: "content",
-          data: "These are customizable fee schedule modeling tools."
-        };
-      case "ASA Base Units & Fee Calc":
-        return {
-          type: "content",
-          data: "This is the Anesthesia base units and fee calculation methodology."
-        };
+
       case "ICD-10-CM Crosswalks":
         return {
-          type: "content",
-          data: "These are mappings to ICD-10-CM diagnosis codes."
+          type: "crosswalk-table",
+          data: {
+            title: "ICD-10-CM Diagnosis Codes",
+            subtitle: "Crosswalks are SUGGESTIONS ONLY. Please contact your Medicare contractor or payer if you have questions or to confirm the use of a code in documentation and/or billing.",
+            categories: [
+              {
+                category: "Obesity & Metabolic",
+                codes: [
+                  { code: "E66.01", description: "Morbid (severe) obesity due to excess calories", status: "ACTIVE" },
+                  { code: "E66.09", description: "Other obesity due to excess calories", status: "ACTIVE" },
+                  { code: "E66.1", description: "Drug-induced obesity", status: "ACTIVE" },
+                  { code: "E66.2", description: "Morbid (severe) obesity with alveolar hypoventilation", status: "ACTIVE" },
+                  { code: "E66.3", description: "Overweight", status: "ACTIVE" },
+                  { code: "E66.9", description: "Obesity, unspecified", status: "ACTIVE" }
+                ]
+              },
+              {
+                category: "Cardiovascular Conditions",
+                codes: [
+                  { code: "I42.0", description: "Dilated cardiomyopathy", status: "ACTIVE" },
+                  { code: "I42.1", description: "Obstructive hypertrophic cardiomyopathy", status: "ACTIVE" },
+                  { code: "I42.2", description: "Other hypertrophic cardiomyopathy", status: "ACTIVE" },
+                  { code: "I45.81", description: "Long QT syndrome", status: "ACTIVE" },
+                  { code: "I49.8", description: "Other specified cardiac arrhythmias", status: "ACTIVE" },
+                  { code: "I49.9", description: "Cardiac arrhythmia, unspecified", status: "ACTIVE" }
+                ]
+              },
+              {
+                category: "Genetic Syndromes",
+                codes: [
+                  { code: "Q87.40", description: "Marfan syndrome, unspecified", status: "ACTIVE" },
+                  { code: "Q87.410", description: "Marfan syndrome with aortic dilation", status: "ACTIVE" },
+                  { code: "Q87.418", description: "Marfan syndrome with other cardiovascular manifestations", status: "ACTIVE" },
+                  { code: "Q87.42", description: "Marfan syndrome with ocular manifestations", status: "ACTIVE" },
+                  { code: "Q87.43", description: "Marfan syndrome with skeletal manifestation", status: "ACTIVE" }
+                ]
+              },
+              {
+                category: "Symptoms & Signs",
+                codes: [
+                  { code: "R00.2", description: "Palpitations", status: "ACTIVE" },
+                  { code: "R01.0", description: "Benign and innocent cardiac murmurs", status: "ACTIVE" },
+                  { code: "R01.1", description: "Cardiac murmur, unspecified", status: "ACTIVE" },
+                  { code: "R03.0", description: "Elevated blood-pressure reading, without diagnosis of hypertension", status: "ACTIVE" },
+                  { code: "R53.83", description: "Other fatigue", status: "ACTIVE" },
+                  { code: "R55", description: "Syncope and collapse", status: "ACTIVE" }
+                ]
+              },
+              {
+                category: "Encounters & Examinations",
+                codes: [
+                  { code: "Z00.00", description: "Encounter for general adult medical examination without abnormal findings", status: "ACTIVE" },
+                  { code: "Z00.01", description: "Encounter for general adult medical examination with abnormal findings", status: "ACTIVE" },
+                  { code: "Z00.121", description: "Encounter for routine child health examination with abnormal findings", status: "ACTIVE" },
+                  { code: "Z00.129", description: "Encounter for routine child health examination without abnormal findings", status: "ACTIVE" }
+                ]
+              },
+              {
+                category: "BMI Classifications",
+                codes: [
+                  { code: "Z68.25", description: "Body mass index [BMI] 25.0-25.9, adult", status: "ACTIVE" },
+                  { code: "Z68.30", description: "Body mass index [BMI]30.0-30.9, adult", status: "ACTIVE" },
+                  { code: "Z68.35", description: "Body mass index [BMI] 35.0-35.9, adult", status: "ACTIVE" },
+                  { code: "Z68.41", description: "Body mass index [BMI]40.0-44.9, adult", status: "ACTIVE" },
+                  { code: "Z68.45", description: "Body mass index [BMI] 70 or greater, adult", status: "ACTIVE" }
+                ]
+              },
+              {
+                category: "Family History",
+                codes: [
+                  { code: "Z82.41", description: "Family history of sudden cardiac death", status: "ACTIVE" },
+                  { code: "Z82.49", description: "Family history of ischemic heart disease and other diseases of the circulatory system", status: "ACTIVE" },
+                  { code: "Z84.81", description: "Family history of carrier of genetic disease", status: "ACTIVE" }
+                ]
+              }
+            ]
+          }
         };
-      case "ICD-10-PCS Crosswalk":
-        return {
-          type: "content",
-          data: "These are mappings to ICD-10-PCS procedure codes."
-        };
-      case "HCPCS / Supply Crosswalk":
-        return {
-          type: "content",
-          data: "These are related HCPCS codes and supply items."
-        };
+
       case "CPT Assistant Articles":
         return {
-          type: "content",
-          data: "These are relevant CPT Assistant clarifications and guidance."
+          type: "articles-list",
+          data: {
+            title: "CPT® Assistant Articles (4)",
+            description: "Expert insights and interpretations by the CPT Assistant Editorial Board with detailed examples, charts, graphs and illustrations to help understand correct coding practices.",
+            accessNote: "Access to this feature is available in the following products: AMA's CPT® Assistant - Current + Archives/Advanced Coding Pack",
+            articles: [
+              {
+                year: "2020",
+                title: "Pulmonary Diagnostic Testing and Therapies Services 2021 Update",
+                month: "December 2020"
+              },
+              {
+                year: "2017",
+                title: "Pulmonary Diagnostic Testing and Therapies",
+                month: "October 2017"
+              },
+              {
+                year: "2016",
+                title: "Evaluation and Management: Hospital Inpatient Services (Q&A)",
+                month: "April 2016"
+              },
+              {
+                year: "2004",
+                title: "Additional Coding Changes to the Category III Codes",
+                month: "July 2004"
+              }
+            ]
+          }
         };
+
       case "AHA Coding Clinic":
         return {
-          type: "content",
-          data: "These are American Hospital Association Coding Clinic references."
+          type: "articles-list",
+          data: {
+            title: "AHA Coding Clinic® Articles (5)",
+            description: "Official publication for Level I HCPCS (CPT-4 codes) for hospital providers, also covering specific Level II HCPCS codes for hospitals, physicians and other health professionals.",
+            accessNote: "Access to this feature is available in the following products: AHA's Coding Clinic® - HCPCS +Archives",
+            articles: [
+              {
+                year: "2024",
+                title: "For Your Information: New CPT Category III codes",
+                month: "2024"
+              },
+              {
+                year: "2024",
+                title: "For Your Information: New and Revised CPT Category III Codes",
+                month: "2024"
+              },
+              {
+                year: "2015",
+                title: "Bundling/unbundling caution is essential for accurate coding and reporting",
+                month: "2015"
+              },
+              {
+                year: "2004",
+                title: "CMS further defines observation care",
+                month: "2004"
+              },
+              {
+                year: "2002",
+                title: "FOR your INFORMATION: Observation services, HCPCS, and APC's",
+                month: "2002"
+              }
+            ]
+          }
         };
-      case "Visual Icons / Alerts":
-        return {
-          type: "content",
-          data: "These are visual indicators for important code characteristics."
-        };
-      case "Real-Time Claim Scrubber":
-        return {
-          type: "content",
-          data: "These are real-time validation and claim scrubbing results."
-        };
+
       default:
         return {
           type: "content",
@@ -806,6 +715,221 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (content.type === "rich-content") {
+      return (
+        <div className="space-y-6">
+          <h4 className="text-lg font-semibold text-gray-900">{content.data.title}</h4>
+          
+          {content.data.content && (
+            <div className="prose prose-sm max-w-none">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{content.data.content}</p>
+            </div>
+          )}
+          
+          {content.data.sections && content.data.sections.map((section, index) => (
+            <div key={index} className="border-l-4 border-blue-500 pl-4 space-y-3">
+              <h5 className="font-semibold text-gray-900">{section.title}</h5>
+              
+              {section.content && (
+                <p className="text-gray-700">{section.content}</p>
+              )}
+              
+              {section.note && (
+                <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
+                  <strong>Note:</strong> {section.note}
+                </p>
+              )}
+              
+              {section.codes && (
+                <div className="space-y-2">
+                  {section.codes.map((code, codeIndex) => (
+                    <div key={codeIndex} className="flex gap-3 items-start">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 font-mono">
+                        {code.code}
+                      </Badge>
+                      <span className="text-sm text-gray-700">{code.description}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {section.references && (
+                <div className="space-y-2">
+                  <h6 className="font-medium text-gray-800">References:</h6>
+                  {section.references.map((ref, refIndex) => (
+                    <div key={refIndex} className="flex gap-3 items-start">
+                      <Badge variant="outline" className="bg-gray-50 text-gray-700 font-mono">
+                        {ref.code}
+                      </Badge>
+                      <span className="text-sm text-gray-600">{ref.context}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {content.data.copyright && (
+            <p className="text-xs text-gray-500 mt-4">{content.data.copyright}</p>
+          )}
+        </div>
+      );
+    }
+
+    if (content.type === "crosswalk-table") {
+      return (
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">{content.data.title}</h4>
+            <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
+              {content.data.subtitle}
+            </p>
+          </div>
+          
+          {content.data.categories.map((category, categoryIndex) => (
+            <div key={categoryIndex} className="space-y-3">
+              <h5 className="font-semibold text-gray-900 border-l-4 border-blue-500 pl-3">
+                {category.category}
+              </h5>
+              
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-gray-50">
+                    <TableRow>
+                      <TableHead className="font-semibold text-gray-700">ICD-10-CM Code</TableHead>
+                      <TableHead className="font-semibold text-gray-700">Description</TableHead>
+                      <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {category.codes.map((code, codeIndex) => (
+                      <TableRow key={codeIndex}>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono">
+                            {code.code}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm">{code.description}</TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={code.status === "ACTIVE" ? "default" : "secondary"}
+                            className={code.status === "ACTIVE" ? "bg-green-100 text-green-800" : ""}
+                          >
+                            {code.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (content.type === "articles-list") {
+      return (
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">{content.data.title}</h4>
+            <p className="text-gray-700 mb-3">{content.data.description}</p>
+            <p className="text-sm text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-200">
+              {content.data.accessNote}
+            </p>
+          </div>
+          
+          <div className="space-y-3">
+            {content.data.articles.map((article, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h5 className="font-medium text-gray-900 mb-1">{article.title}</h5>
+                    <p className="text-sm text-gray-600">{article.month}</p>
+                  </div>
+                  <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700">
+                    {article.year}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (content.type === "cci-ncci") {
+      return (
+        <div className="space-y-6">
+          <h4 className="text-lg font-semibold text-gray-900">{content.data.title}</h4>
+          
+          {/* MUE Section */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-semibold text-gray-900 mb-3">{content.data.mue.title}</h5>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <span className="text-sm font-medium text-gray-600">Units of Service:</span>
+                <p className="text-lg font-bold text-blue-600">{content.data.mue.unitsOfService}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-600">Adjudication Indicator:</span>
+                <p className="text-sm text-gray-800">{content.data.mue.adjudicationIndicator}</p>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-700 mb-3">{content.data.mue.description}</p>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm font-medium text-yellow-800">Rationale: {content.data.mue.rationale}</p>
+              <p className="text-sm text-yellow-700 mt-1">{content.data.mue.note}</p>
+            </div>
+          </div>
+          
+          {/* PTP Edits Section */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-semibold text-gray-900 mb-3">{content.data.ptpEdits.title}</h5>
+            <p className="text-sm text-gray-700 mb-4">{content.data.ptpEdits.description}</p>
+            
+            <div className="mb-4">
+              <p className="font-medium text-gray-900">{content.data.ptpEdits.column1Description}</p>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-gray-50">
+                  <TableRow>
+                    <TableHead className="font-semibold text-gray-700">Column 2 Code</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Modifier Allowed</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {content.data.ptpEdits.column2Codes.map((code, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Badge variant="outline" className="font-mono">
+                          {code.code}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={code.modifier === "1" ? "default" : "secondary"}
+                          className={code.modifier === "1" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                        >
+                          {code.modifier === "1" ? "Yes" : "No"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </div>
       );
@@ -1324,7 +1448,9 @@ export const ElementBlock = ({ element, codeId }: ElementBlockProps) => {
 
     return (
       <div className="prose prose-sm max-w-none">
-        <p className="text-gray-700">{content.data}</p>
+        <p className="text-gray-700">
+          {content.type === "content" ? content.data : `This is sample content for ${element.ElementName}. In a real application, this would be populated with actual data from your API or database.`}
+        </p>
       </div>
     );
   };
