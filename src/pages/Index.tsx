@@ -331,8 +331,8 @@ const Index = () => {
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center space-x-4">
             <img 
-              src="/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png" 
-              alt="CodeBooks" 
+              src="/codebooks-logo.svg" 
+              alt="CodeBooks logo" 
               className="h-8 cursor-pointer"
               onClick={() => {
                 setSelectedCode(null);
