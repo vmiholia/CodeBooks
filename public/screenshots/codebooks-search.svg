@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1365 768" role="img" aria-labelledby="titleSearch descSearch">
+  <title id="titleSearch">CodeBooks Search Results</title>
+  <desc id="descSearch">Stylized representation of the CodeBooks search results experience</desc>
+  <rect width="1365" height="768" fill="#f8fafc" />
+  <rect x="0" y="0" width="1365" height="72" fill="#111827" opacity="0.04" />
+  <text x="60" y="44" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="700" font-size="28" fill="#111827">CODEBOOKS</text>
+  <rect x="240" y="20" width="600" height="40" rx="20" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" />
+  <circle cx="270" cy="40" r="10" fill="#7c3aed" opacity="0.6" />
+  <text x="295" y="46" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" fill="#4c1d95">Search medical codes…</text>
+  <text x="120" y="140" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="700" font-size="36" fill="#0f172a">Search Results</text>
+  <text x="120" y="180" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" fill="#475569">3 results for "9"</text>
+  <g transform="translate(120,210)">
+    <rect width="96" height="36" rx="18" fill="#0f172a" />
+    <text x="20" y="24" font-family="'Helvetica Neue'" font-size="16" font-weight="600" fill="#fff">All</text>
+    <rect x="112" width="120" height="36" rx="18" fill="#ffffff" stroke="#cbd5f5" />
+    <text x="132" y="24" font-family="'Helvetica Neue'" font-size="16" font-weight="600" fill="#475569">CPT Codes</text>
+    <rect x="244" width="140" height="36" rx="18" fill="#ffffff" stroke="#cbd5f5" />
+    <text x="264" y="24" font-family="'Helvetica Neue'" font-size="16" font-weight="600" fill="#475569">ICD-10-CM</text>
+    <rect x="396" width="120" height="36" rx="18" fill="#ffffff" stroke="#cbd5f5" />
+    <text x="416" y="24" font-family="'Helvetica Neue'" font-size="16" font-weight="600" fill="#475569">HCPCS</text>
+    <rect x="528" width="120" height="36" rx="18" fill="#ffffff" stroke="#cbd5f5" />
+    <text x="548" y="24" font-family="'Helvetica Neue'" font-size="16" font-weight="600" fill="#475569">Procedures</text>
+    <rect x="660" width="120" height="36" rx="18" fill="#ffffff" stroke="#cbd5f5" />
+    <text x="680" y="24" font-family="'Helvetica Neue'" font-size="16" font-weight="600" fill="#475569">Articles</text>
+  </g>
+  <!-- Result cards -->
+  <g transform="translate(120,280)">
+    <rect width="1125" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" />
+    <text x="32" y="48" font-family="'Helvetica Neue'" font-size="22" font-weight="700" fill="#111827">93005</text>
+    <text x="120" y="48" font-family="'Helvetica Neue'" font-size="22" fill="#475569">Electrocardiogram, routine ECG…</text>
+    <circle cx="38" cy="78" r="6" fill="#22c55e" />
+    <text x="52" y="82" font-family="'Helvetica Neue'" font-size="16" fill="#15803d">Active</text>
+    <text x="120" y="82" font-family="'Helvetica Neue'" font-size="16" fill="#475569">Updated recently</text>
+    <rect x="980" y="36" width="110" height="32" rx="16" fill="#fee2e2" />
+    <text x="995" y="57" font-family="'Helvetica Neue'" font-size="16" fill="#b91c1c">Cardiology</text>
+  </g>
+  <g transform="translate(120,420)">
+    <rect width="1125" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" />
+    <text x="32" y="48" font-family="'Helvetica Neue'" font-size="22" font-weight="700" fill="#111827">29888</text>
+    <text x="120" y="48" font-family="'Helvetica Neue'" font-size="22" fill="#475569">Arthroscopically aided ACL repair…</text>
+    <circle cx="38" cy="78" r="6" fill="#22c55e" />
+    <text x="52" y="82" font-family="'Helvetica Neue'" font-size="16" fill="#15803d">Active</text>
+    <text x="120" y="82" font-family="'Helvetica Neue'" font-size="16" fill="#475569">Updated recently</text>
+    <rect x="960" y="36" width="130" height="32" rx="16" fill="#dbeafe" />
+    <text x="980" y="57" font-family="'Helvetica Neue'" font-size="16" fill="#1d4ed8">Musculoskeletal</text>
+  </g>
+  <g transform="translate(120,560)">
+    <rect width="1125" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" />
+    <text x="32" y="48" font-family="'Helvetica Neue'" font-size="22" font-weight="700" fill="#111827">99213</text>
+    <text x="120" y="48" font-family="'Helvetica Neue'" font-size="22" fill="#475569">Office or other outpatient visit…</text>
+    <circle cx="38" cy="78" r="6" fill="#22c55e" />
+    <text x="52" y="82" font-family="'Helvetica Neue'" font-size="16" fill="#15803d">Active</text>
+    <text x="120" y="82" font-family="'Helvetica Neue'" font-size="16" fill="#475569">Updated recently</text>
+    <rect x="1010" y="36" width="80" height="32" rx="16" fill="#ede9fe" />
+    <text x="1030" y="57" font-family="'Helvetica Neue'" font-size="16" fill="#7c3aed">E/M</text>
+  </g>
+</svg>

@@ -10,9 +10,14 @@ CodeBooks is an interactive reference experience for medical billing and coding 
 - Embedded CodeBooks Chatbot for quick Q&A support directly inside the workspace.
 
 ## Screenshots
-![CodeBooks home screen](public/lovable-uploads/24c896e2-4d88-41da-9e7e-0a9c72831117.png)
+- **Search Results** – Powerful filters and inline status chips keep the team focused:
+  ![CodeBooks search results](public/screenshots/codebooks-search.svg)
+- **Code Overview** – Accordion layout summarizes documentation, billing, and compliance workstreams:
+  ![CodeBooks detail view](public/screenshots/codebooks-detail.svg)
+- **Compliance Insights** – Highlighted NCCI edits clarify modifier rules and payer expectations:
+  ![CodeBooks compliance view](public/screenshots/codebooks-compliance.svg)
 
-> Tip: Replace or add images in `public/lovable-uploads/` to keep the visuals current.
+> Tip: Update the assets in `public/screenshots/` as you capture new UI states.
 
 ## Getting Started
 ### Prerequisites
