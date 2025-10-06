@@ -26,8 +26,8 @@ CodeBooks is an interactive reference experience for medical billing and coding 
 
 ### Installation
 ```bash
-git clone https://github.com/vmiholia/codebook-tab-builder.git
-cd codebook-tab-builder
+git clone https://github.com/vmiholia/CodeBooks.git
+cd CodeBooks
 npm install
 ```
 
